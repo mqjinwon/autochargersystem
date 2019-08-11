@@ -1,5 +1,8 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include <queue>
+#include <deque>
 
 using namespace std;
 
@@ -19,6 +22,7 @@ class Map {
 
 private:
 	int pos[MAP_ROW + 1][MAP_COL + 1]; // 좌표에 따른 갈 수 있는 곳 확인
+	int id[MAP_ROW + 1][MAP_COL + 1]; //고유 위치 표시
 	bool ischecked[MAP_ROW + 1][MAP_COL + 1]; // 갔던 곳은 체크해놔서 더이상 못가게 하기
 
 public:
@@ -35,4 +39,8 @@ public:
 	void putCheck(int x, int y) {
 		ischecked[x][y] = false;
 	}
+
+	//좌표값 반환
+	vector<vector<int>> BFS(int s_x, int s_y, int e_x, int e_y);
+	
 };
