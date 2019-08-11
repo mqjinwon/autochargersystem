@@ -1,35 +1,14 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include "treeBFS.h"
+#include "tracemap.h"
 
-using namespace std;
 
-#define MAP_ROW 7 // 배열기준(0부터 시작)
-#define MAP_COL 10 // 배열기준(0부터 시작)
-//direction
-enum{
-    NODIR = 0, //0          1
-    L, U, R, D, //1~4       4
-    LU, UR, RD, DL, //5~8   4
-    LUR, URD, RDL, //9~11   3
-    LURD //12               1
-};
-
-class Map{
-
-private:
-    int pos[MAP_ROW+1][MAP_COL+1];
-	bool ischecked[MAP_ROW + 1][MAP_COL + 1];
-
-public:
-	Map() {
+Map::Map() {
+	{
 		//초기화 과정
-//        for(int row =0; row<=MAP_ROW; row++){
-//            for(int col=0; col<=MAP_COL; col++){
-//                pos[row][col] = 15;
-//            }
-//        }
+		//        for(int row =0; row<=MAP_ROW; row++){
+		//            for(int col=0; col<=MAP_COL; col++){
+		//                pos[row][col] = 15;
+		//            }
+		//        }
 
 		pos[0][0] = D; pos[MAP_ROW][0] = R; pos[0][MAP_COL] = L; pos[MAP_ROW][MAP_COL] = U; //corner - 4
 		for (int row = 2; row <= MAP_ROW - 2; row++) {
@@ -57,49 +36,14 @@ public:
 		}
 		pos[0][4] = DL; pos[0][5] = L; pos[7][4] = R; pos[7][5] = UR; //exception -4
 
-		//useless - 8
+																	  //useless - 8
 		pos[1][2] = R; pos[1][3] = R; pos[1][6] = R; pos[1][7] = R;
 		pos[6][2] = L; pos[6][3] = L; pos[6][6] = L; pos[6][7] = L;
 
-		////ischeck TRUE로 초기화
+		//ischeck TRUE로 초기화
 		for (int row = 0; row <= MAP_ROW; row++)
-			for (int col = 0; col <= MAP_COL; col++) 
+			for (int col = 0; col <= MAP_COL; col++)
 				ischecked[row][col] = true;
 	}
-
-    int getPos(int x, int y){
-        return pos[x][y];
-    }
-
-	bool getCheck(int x, int y){
-		return ischecked[x][y];
-	}
-
-	void putCheck(int x, int y){
-		ischecked[x][y] = false;
-	}
-};
-
-class Car{
-
-private:
-    //vector<int[]> route;
-
-public:
-    Car(){
-    }
-};
-
-int main()
-{
-    Map tmp;
-
-    for(int row =0; row<=MAP_ROW; row++){
-        for(int col=0; col<=MAP_COL; col++){
-            cout << tmp.getPos(row, col) << "\t";
-        }
-        cout << endl;
-    }
-
-    return 0;
 }
+
