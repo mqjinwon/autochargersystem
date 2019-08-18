@@ -28,16 +28,23 @@ private:
 public:
 	Map();
 
-	int getPos(int x, int y) {
-		return pos[x][y];
+	int getPos(int x_col, int y_row) {
+		return pos[y_row][x_col];
 	}
 
-	bool getCheck(int x, int y) {
-		return ischecked[x][y];
+	bool getCheck(int x_col, int y_row) {
+		return ischecked[y_row][x_col];
 	}
 
-	void putCheck(int x, int y) {
-		ischecked[x][y] = false;
+	void putCheck(int x_col, int y_row) {
+		ischecked[y_row][x_col] = false;
+	}
+
+	void initCheck() {
+		for (int row = 0; row <= MAP_ROW; row++)
+			for (int col = 0; col <= MAP_COL; col++) {
+				ischecked[row][col] = true;
+			}
 	}
 
 	//ÁÂÇ¥°ª ¹ÝÈ¯

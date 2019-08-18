@@ -26,9 +26,9 @@ Map::Map() {
 			pos[row][4] = RDL; //except for [1,4], [6,4]
 			pos[row][5] = LUR; //except for [1,5], [6,5]
 			pos[row][8] = RDL; //except for [1,8], [6,8]
-			pos[row][9] = LU;
+			pos[row][9] = LU; // except for [2,9], [5,10]
 		}
-		pos[1][1] = R; pos[6][1] = U; pos[1][4] = RD; pos[6][4] = DL; pos[1][5] = UR; pos[6][5] = LU; pos[1][8] = D; pos[6][8] = L; //exception -8
+		pos[1][1] = R; pos[6][1] = U; pos[1][4] = RD; pos[6][4] = DL; pos[1][5] = UR; pos[6][5] = LU; pos[1][8] = D; pos[6][8] = L;  pos[2][9] = LUR; pos[5][9] = LUR;//exception - 10
 
 		//first row & last row 8*2 - 4 = 12
 		for (int col = 1; col <= MAP_COL - 1; col++) {
@@ -48,7 +48,7 @@ Map::Map() {
 				ischecked[row][col] = true;
 			}
 
-	}
+		}
 }
 
 
@@ -64,21 +64,39 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 	int depth = 0; //깊이
 	int dir = 0; // 갈 수 있는 방향을 알려주는 변수
 	int parent = -1;
+	vector<vector<int>> all_data;
 
 	//초기화 단계
 	queue<vector<int>> que; //(x, y, depth, parent)의 정보를 담는다.
 
-	vector<int> data = { s_x, s_y, depth, -1 };
-	que.push(data);
+	vector<int> pre_data = { s_x, s_y, depth, parent}; //뺄때 데이터 건드리는 부분
+	vector<int> now_data; // 담을 데이터들 건드리는 부분
+
+	vector<vector<int>> path;
+	
+	que.push(pre_data);
 
 	//bfs 실행
 	while (!que.empty()) {
 
 		//이전 값 불러오고 빼내기
-		data = que.front();
-		dir = getPos(data[0], data[1]);
-		depth++;
-		parent = data[3];
+		pre_data = que.front();
+		putCheck(pre_data[0], pre_data[1]);
+		dir = getPos(pre_data[0], pre_data[1]);
+		depth = pre_data[2] + 1;
+		parent = pre_data[3];
+
+		//안내용 --------------------------------------------------------------------------------------------나중에 지워야지 빨라짐!!
+		cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : " << pre_data[2] << endl;
+
+		//목표위치를 찾으면 탈출
+		if (pre_data[0] == e_x && pre_data[1] == e_y) {
+			initCheck();
+			return path;
+		}
+
+		//모든 경로 기록들을 저장하기
+		all_data.push_back(pre_data);
 
 		que.pop();
 
@@ -86,36 +104,106 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		if (dir == NODIR) {
 			continue;
 		}
-		else if (dir == L) {
+		else if (dir == L || dir == LU || dir == LUR) {
 
-			if (dir == LU) {
+			//갈 수 있는 경로 추가하기
+			if (getCheck(pre_data[0] - 1, pre_data[1])) {
+				//putCheck(pre_data[0] - 1, pre_data[1]);
+				now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+				que.push(now_data);
+			}
 
+
+			if (dir == LU || dir == LUR) {
+				if (getCheck(pre_data[0], pre_data[1] - 1)) {
+					//putCheck(pre_data[0], pre_data[1] - 1);
+					now_data = { pre_data[0], pre_data[1] - 1, depth, ++parent };
+					que.push(now_data);
+				}
+
+				/////////여기부터!!
 				if (dir == LUR) {
+					if (getCheck(pre_data[0] + 1, pre_data[1])) {
+						//putCheck(pre_data[0] + 1, pre_data[1]);
+						now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+						que.push(now_data);
 
+					}
 				}
 			}
 		}
-		else if (dir == U) {
+		else if (dir == U || dir == UR || dir == URD) {
+			if (getCheck(pre_data[0], pre_data[1] - 1)) {
+				//putCheck(pre_data[0], pre_data[1] - 1);
+				now_data = { pre_data[0], pre_data[1] - 1, depth, ++parent };
+				que.push(now_data);
 
-			if (dir == UR) {
+			}
+
+			if (dir == UR || dir == URD) {
+				if (getCheck(pre_data[0] + 1, pre_data[1])) {
+					//putCheck(pre_data[0] + 1, pre_data[1]);
+					now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+					que.push(now_data);
+
+				}
 
 				if (dir == URD) {
+					if (getCheck(pre_data[0], pre_data[1] + 1)) {
+						//putCheck(pre_data[0], pre_data[1] + 1);
+						now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+						que.push(now_data);
+
+					}
 
 				}
 			}
 		}
-		else if (dir == R) {
+		else if (dir == R || dir == RD || dir == RDL) {
+			if (getCheck(pre_data[0] + 1, pre_data[1])) {
+				//putCheck(pre_data[0] + 1, pre_data[1]);
+				now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+				que.push(now_data);
 
-			if (dir == RD) {
+
+			}
+
+			if (dir == RD || dir == RDL) {
+				if (getCheck(pre_data[0], pre_data[1] + 1)) {
+					//putCheck(pre_data[0], pre_data[1] + 1);
+					now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+					que.push(now_data);
+
+				}
 
 				if (dir == RDL) {
+					if (getCheck(pre_data[0] - 1, pre_data[1])) {
+						//putCheck(pre_data[0] - 1, pre_data[1]);
+						now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+						que.push(now_data);
+
+					}
 
 				}
 			}
 		}
-		else if (dir == D) {
+		else if (dir == D || dir == DL) {
+			if (getCheck(pre_data[0], pre_data[1] + 1)) {
+				//putCheck(pre_data[0], pre_data[1] + 1);
+				now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+				que.push(now_data);
+
+
+			}
 
 			if (dir == DL) {
+				if (getCheck(pre_data[0] - 1, pre_data[1])) {
+					//putCheck(pre_data[0] - 1, pre_data[1]);
+					now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+					que.push(now_data);
+
+
+				}
 
 			}
 		}
