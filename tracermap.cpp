@@ -121,7 +121,6 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 					que.push(now_data);
 				}
 
-				/////////여기부터!!
 				if (dir == LUR) {
 					if (getCheck(pre_data[0] + 1, pre_data[1])) {
 						//putCheck(pre_data[0] + 1, pre_data[1]);
@@ -210,6 +209,9 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 
 	}
 
+
+
 	return vector<vector<int>>();
 }
+
 
