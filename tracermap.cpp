@@ -64,15 +64,17 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 	int depth = 0; //깊이
 	int dir = 0; // 갈 수 있는 방향을 알려주는 변수
 	int parent = -1;
-	vector<vector<int>> all_data;
+	int id = 0;
+	
 
 	//초기화 단계
 	queue<vector<int>> que; //(x, y, depth, parent)의 정보를 담는다.
 
-	vector<int> pre_data = { s_x, s_y, depth, parent}; //뺄때 데이터 건드리는 부분
+	vector<int> pre_data = { s_x, s_y, depth, id, parent}; //뺄때 데이터 건드리는 부분
 	vector<int> now_data; // 담을 데이터들 건드리는 부분
 
-	vector<vector<int>> path;
+	vector<vector<int>> all_data; // 모든 경로 저장
+	vector<vector<int>> path; // 실제 경로 표현
 	
 	que.push(pre_data);
 
@@ -87,11 +89,25 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		parent = pre_data[3];
 
 		//안내용 --------------------------------------------------------------------------------------------나중에 지워야지 빨라짐!!
-		cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : " << pre_data[2] << endl;
+		cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : "
+			<< pre_data[2] << ", id : " << pre_data[3] << ", parent : " << pre_data[4] << endl;
 
 		//목표위치를 찾으면 탈출
 		if (pre_data[0] == e_x && pre_data[1] == e_y) {
+			path.push_back(pre_data); // 맨처음 데이터 저장
+
+			//실제 경로 담기 위한 부분
+			vector<int> tmp = pre_data;
+			for (int i = depth-1; i > 0; i--) {
+				for (int j = 0; j < all_data.size(); j++) {
+					if (all_data[j][3] == tmp[4]) {
+						tmp = all_data[j];
+						path.push_back(tmp);
+					}
+				}
+			}
 			initCheck();
+			cout << "============================================" << endl;
 			return path;
 		}
 
@@ -109,7 +125,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 			//갈 수 있는 경로 추가하기
 			if (getCheck(pre_data[0] - 1, pre_data[1])) {
 				//putCheck(pre_data[0] - 1, pre_data[1]);
-				now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+				now_data = { pre_data[0] - 1, pre_data[1], depth, ++id, parent };
 				que.push(now_data);
 			}
 
@@ -117,14 +133,14 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 			if (dir == LU || dir == LUR) {
 				if (getCheck(pre_data[0], pre_data[1] - 1)) {
 					//putCheck(pre_data[0], pre_data[1] - 1);
-					now_data = { pre_data[0], pre_data[1] - 1, depth, ++parent };
+					now_data = { pre_data[0], pre_data[1] - 1, depth, ++id, parent };
 					que.push(now_data);
 				}
 
 				if (dir == LUR) {
 					if (getCheck(pre_data[0] + 1, pre_data[1])) {
 						//putCheck(pre_data[0] + 1, pre_data[1]);
-						now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+						now_data = { pre_data[0] + 1, pre_data[1], depth, ++id, parent };
 						que.push(now_data);
 
 					}
@@ -134,7 +150,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		else if (dir == U || dir == UR || dir == URD) {
 			if (getCheck(pre_data[0], pre_data[1] - 1)) {
 				//putCheck(pre_data[0], pre_data[1] - 1);
-				now_data = { pre_data[0], pre_data[1] - 1, depth, ++parent };
+				now_data = { pre_data[0], pre_data[1] - 1, depth, ++id, parent };
 				que.push(now_data);
 
 			}
@@ -142,7 +158,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 			if (dir == UR || dir == URD) {
 				if (getCheck(pre_data[0] + 1, pre_data[1])) {
 					//putCheck(pre_data[0] + 1, pre_data[1]);
-					now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+					now_data = { pre_data[0] + 1, pre_data[1], depth, ++id, parent };
 					que.push(now_data);
 
 				}
@@ -150,7 +166,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 				if (dir == URD) {
 					if (getCheck(pre_data[0], pre_data[1] + 1)) {
 						//putCheck(pre_data[0], pre_data[1] + 1);
-						now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+						now_data = { pre_data[0], pre_data[1] + 1, depth, ++id, parent };
 						que.push(now_data);
 
 					}
@@ -161,7 +177,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		else if (dir == R || dir == RD || dir == RDL) {
 			if (getCheck(pre_data[0] + 1, pre_data[1])) {
 				//putCheck(pre_data[0] + 1, pre_data[1]);
-				now_data = { pre_data[0] + 1, pre_data[1], depth, ++parent };
+				now_data = { pre_data[0] + 1, pre_data[1], depth, ++id, parent };
 				que.push(now_data);
 
 
@@ -170,7 +186,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 			if (dir == RD || dir == RDL) {
 				if (getCheck(pre_data[0], pre_data[1] + 1)) {
 					//putCheck(pre_data[0], pre_data[1] + 1);
-					now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+					now_data = { pre_data[0], pre_data[1] + 1, depth, ++id, parent };
 					que.push(now_data);
 
 				}
@@ -178,7 +194,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 				if (dir == RDL) {
 					if (getCheck(pre_data[0] - 1, pre_data[1])) {
 						//putCheck(pre_data[0] - 1, pre_data[1]);
-						now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+						now_data = { pre_data[0] - 1, pre_data[1], depth, ++id, parent };
 						que.push(now_data);
 
 					}
@@ -189,7 +205,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		else if (dir == D || dir == DL) {
 			if (getCheck(pre_data[0], pre_data[1] + 1)) {
 				//putCheck(pre_data[0], pre_data[1] + 1);
-				now_data = { pre_data[0], pre_data[1] + 1, depth, ++parent };
+				now_data = { pre_data[0], pre_data[1] + 1, depth, ++id, parent };
 				que.push(now_data);
 
 
@@ -198,7 +214,7 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 			if (dir == DL) {
 				if (getCheck(pre_data[0] - 1, pre_data[1])) {
 					//putCheck(pre_data[0] - 1, pre_data[1]);
-					now_data = { pre_data[0] - 1, pre_data[1], depth, ++parent };
+					now_data = { pre_data[0] - 1, pre_data[1], depth, ++id, parent };
 					que.push(now_data);
 
 
