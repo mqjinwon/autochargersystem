@@ -1,15 +1,7 @@
 #include "tracemap.h"
 
-
 Map::Map() {
 	{
-		//초기화 과정
-		//        for(int row =0; row<=MAP_ROW; row++){
-		//            for(int col=0; col<=MAP_COL; col++){
-		//                pos[row][col] = 15;
-		//            }
-		//        }
-
 		pos[0][0] = D; pos[MAP_ROW][0] = R; pos[0][MAP_COL] = L; pos[MAP_ROW][MAP_COL] = U; //corner - 4
 		for (int row = 2; row <= MAP_ROW - 2; row++) {
 			pos[row][2] = L; pos[row][3] = R; pos[row][6] = L; pos[row][7] = R; //load -16
@@ -19,7 +11,7 @@ Map::Map() {
 		pos[0][MAP_COL] = NODIR; pos[1][MAP_COL] = NODIR; pos[3][MAP_COL] = NODIR; //charger illustion - 6
 		pos[4][MAP_COL] = NODIR; pos[6][MAP_COL] = NODIR; pos[7][MAP_COL] = NODIR; //charger illustion - 6
 
-		//column line 6*6 -8 = 28
+		//column line 6*6 - 8 = 28
 		for (int row = 1; row <= (MAP_ROW - 1); row++) {
 			pos[row][0] = RD;
 			pos[row][1] = LUR; //except for [1,1], [6,1]
@@ -36,7 +28,7 @@ Map::Map() {
 		}
 		pos[0][4] = DL; pos[0][5] = L; pos[7][4] = R; pos[7][5] = UR; //exception -4
 
-																	  //useless - 8
+		//useless - 8
 		pos[1][2] = R; pos[1][3] = R; pos[1][6] = R; pos[1][7] = R;
 		pos[6][2] = L; pos[6][3] = L; pos[6][6] = L; pos[6][7] = L;
 
@@ -51,14 +43,6 @@ Map::Map() {
 		}
 }
 
-
-//enum {
-//	NODIR = 0, //0          1
-//	L, U, R, D, //1~4       4
-//	LU, UR, RD, DL, //5~8   4
-//	LUR, URD, RDL, //9~11   3
-//	LURD //12               1
-//};
 vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 {
 	int depth = 0; //깊이
