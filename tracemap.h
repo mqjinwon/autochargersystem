@@ -6,8 +6,6 @@
 
 using namespace std;
 
-typedef int(*tmp)[2]; //이차원 배열을 반환하기 위한 형태
-
 #define MAP_ROW 7 // 배열기준(0부터 시작)
 #define MAP_COL 10 // 배열기준(0부터 시작)
 
