@@ -2,8 +2,14 @@
 
 bool Car::putRealPath() {
 	//차의 입장에서 보는 경로를 표현해야함
-	int pre_x, pre_y, now_x, now_y, next_x, next_y;
-	int gap_x, gap_y; // 다음값 - 현재값
+	int now_x = 0 , now_y = 0, next_x = 0, next_y = 0;
+	int pre_gap_x = 0, pre_gap_y = 0; //현재값 - 이전값
+	int now_gap_x = 0, now_gap_y = 0; // 다음값 - 현재값
+	int mode = 0; // 정방향인지, 역방향인지
+
+	int count = 0; // 회전 값
+	int result = 0;
+	int find_x = pre_gap_x, find_y = pre_gap_y;
 
 /*
 	왼쪽 방향으로 있을 경우
@@ -11,10 +17,10 @@ bool Car::putRealPath() {
 	오른쪽 방향으로 있을 경우
 	- [2~5][2, 6]
 
-	1, 0 -> 왼쪽으로 가기
-	0, -1 -> 아래로 가기
-	0, 1 -> 위로 가기
-	-1, 0 -> 오른쪽으로 가기
+	-1, 0 -> 왼쪽으로 가기
+	0, 1 -> 아래로 가기
+	0, -1 -> 위로 가기
+	1, 0 -> 오른쪽으로 가기
 
 	차가 오른쪽 방향으로 있을 경우
 		위로가면 좌회전
@@ -25,25 +31,86 @@ bool Car::putRealPath() {
 		아래로 가면 좌회전
 */
 	for (int i = 0; i < pathLength(); i++) {
-
-
+		pre_gap_x = now_gap_x; pre_gap_y = now_gap_y; // 이전 경로 저장
+		
 		now_x = path[i][0]; next_x = path[i + 1][0];
 		now_y = path[i][1]; next_y = path[i + 1][1];
-		gap_x = next_x - now_x; gap_y = next_y = now_y;
-
-		if ((now_x == 2) || (now_x == 3) || (now_x == 4) || (now_x == 5)) {
-
-			//화물쪽에 있을 때
-			if ((now_y == 2) || (now_y == 3) || (now_y == 6) || (now_y == 7)) {
-				
+		now_gap_x = next_x - now_x; now_gap_y = next_y - now_y;
+		
+		/*마지막에 충전기 들어가기 직전이라면*/
+		if ((i == pathLength()-1) && ((now_x == 9 && now_y == 2) || (now_x == 9 && now_y == 5))) {
+			mode = 2; //충전소 가기 직전
+		}
+		else if ((now_y == 2) || (now_y == 3) || (now_y == 4) || (now_y == 5)) {
+			//충전기쪽에 있을 때
+			if ((now_x == 10)) {
+				realpath.push_back(GO_F);
+				mode = 0; // 정방향
+				continue;
 			}
 
-			//충전기쪽에 있을 때
-			else if ((now_y == 10)) {
-
+			//화물쪽에 있을 때
+			else if ((now_x == 2) || (now_x == 3) || (now_x == 6) || (now_x == 7)) {
+				realpath.push_back(GO_B);
+				//처음에 나오게 되면 뒷꽁무니로 나오므로 처리를 해줘야한다.
+				mode = 1; // 역방향
+				continue;
 			}
 		}
 
+		
+		count = 0; // 회전 값
+		result = 0;
+		find_x = pre_gap_x, find_y = pre_gap_y;
+
+		//값이 같아질 때까지 계속 진행(복소수 개념)
+		while (!((find_x == now_gap_x) && (find_y == now_gap_y))) {
+			if (find_x == 1) {
+				find_x = 0; find_y = 1;
+			}
+			else if (find_y == 1) {
+				find_x = -1; find_y = 0;
+			}
+			else if (find_x == -1) {
+				find_x = 0; find_y = -1;
+			}
+			else if (find_y == -1) {
+				find_x = 1; find_y = 0;
+			}
+			count++;
+		}
+
+		//모드에 따른 경로 삽입
+		switch (mode) {
+		case 0:
+			result = count % 4;
+			realpath.push_back(result);
+			break;
+		case 1:
+			result = count % 4;
+			result = (4 - result) % 4;
+			if (result == GO_F) {
+				realpath.push_back(ROTATE_180);
+				realpath.push_back(GO_F);
+			}
+			else
+				realpath.push_back(result);
+			mode = 0;
+			break;
+		case 2:
+			result = count % 4;
+			if (result == GO_F) {
+				realpath.push_back(ROTATE_180);
+				realpath.push_back(GO_B);
+			}
+			else
+				realpath.push_back(R_B);
+			mode = 0;
+			break;
+
+		default:
+			cerr << "error" << endl;
+		}
 	}
 
 	return true;

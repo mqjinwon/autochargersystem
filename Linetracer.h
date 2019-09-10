@@ -14,29 +14,15 @@ enum {
 	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
 };
 
-/*
-왼쪽 방향으로 있을 경우
-- [2~5][3, 7] / [2, 10], [5, 10]
-오른쪽 방향으로 있을 경우
-- [2~5][2, 6]
-*/
-//정지한 상태에서 차의 방향
-enum {
-	CAR_DIR_L = 0,
-	CAR_DIR_U,
-	CAR_DIR_R,
-	CAR_DIR_D
-};
-
 //차 조종하기 위한 방향
 enum {
-	STOP,
-	GO_L, // left 왼쪽으로 가는 것
 	GO_F, // forward 앞으로 가는 것
 	GO_R, // right 오른쪽으로 가는 것
 	GO_B, // backward 뒤쪽으로 가는 것
-	L_B, //	
-	R_B,
+	GO_L, // left 왼쪽으로 가는 것
+	L_B, // 빽하면서 왼쪽으로 가는 것	
+	R_B, // 뺵하면서 오른쪽으로 가는 것
+	STOP,
 	ROTATE_180 // 180도 회전 시키기
 };
 
@@ -48,7 +34,7 @@ private:
 	int car_dir = 0; //차의 방향
 
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
-	int realpath[100]; // 차가 실제로 가는 경로(상대경로)
+	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
 
 public:
 	Car() {
@@ -85,7 +71,7 @@ public:
 
 	//경로 중 원하는 부분 반환
 	int getRealPath(int i) {
-		if (i > pathLength()) {
+		if (i > realpath.size()) {
 			cerr << "wrong size input!!!" << endl;
 		}
 		else {
@@ -96,6 +82,11 @@ public:
 	//경로의 길이 반환
 	int pathLength() {
 		return path.size() - 1; // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
+	}
+
+	//실제경로의 명령어길이 반환
+	int realpathLength() {
+		return realpath.size(); // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
 	}
 
 	//남은 경로 길이 반환

@@ -67,7 +67,7 @@ int main(){
         cout << endl;
     }
 
-	full_map = tmp.BFS(10, 2, 5, 3);
+	full_map = tmp.BFS(7, 2, 10, 2);
 	car.putPath(full_map);
 
 	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
@@ -81,8 +81,55 @@ int main(){
 	for (int i = 0; i < full_map.size(); i++) {
 		car.getPath(i);
 	}
+	
+	car.putRealPath();
+
+	//enum {
+	//	GO_F, // forward 앞으로 가는 것
+	//	GO_R, // right 오른쪽으로 가는 것
+	//	GO_B, // backward 뒤쪽으로 가는 것
+	//	GO_L, // left 왼쪽으로 가는 것
+	//	L_B, // 빽하면서 왼쪽으로 가는 것	
+	//	R_B, // 뺵하면서 오른쪽으로 가는 것
+	//	STOP,
+	//	ROTATE_180 // 180도 회전 시키기
+	//};
 
 	cout << endl;
+
+	for (int i = 0; i < car.realpathLength(); i++) {
+		if (i % 10 == 0 && i != 0)
+			cout << endl;
+
+		switch (car.getRealPath(i)) {
+		case GO_F:
+			cout << "GO_F" << "\t";
+			break;
+		case GO_R:
+			cout << "GO_R" << "\t";
+			break;
+		case GO_B:
+			cout << "GO_B" << "\t";
+			break;
+		case GO_L:
+			cout << "GO_L" << "\t";
+			break;
+		case L_B:
+			cout << "L_B" << "\t";
+			break;
+		case R_B:
+			cout << "R_B" << "\t";
+			break;
+		case STOP:
+			cout << "STOP" << "\t";
+			break;
+		case ROTATE_180:
+			cout << "ROTATE_180" << "\t";
+			break;
+		}
+	}
+
+	cout << endl << endl;
 
 	for (int row = 0; row <= MAP_ROW; row++) {
 		for (int col = 0; col <= MAP_COL; col++) {
