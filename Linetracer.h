@@ -4,7 +4,7 @@
 static int carID = 0;
 
 //차의 상태를 표현하는 변수
-enum {
+typedef enum {
 	GOING_PICK_STUFF = 0,
 	GOING_DELIVER_STUFF,
 	LIFT_UP,
@@ -14,10 +14,10 @@ enum {
 	GOING_CHARGE,
 	CHARGING,
 	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
-};
+}CAR_STATUS;
 
 //차 조종하기 위한 방향
-enum {
+typedef enum {
 	GO_F, // forward 앞으로 가는 것
 	GO_R, // right 오른쪽으로 가는 것
 	GO_B, // backward 뒤쪽으로 가는 것
@@ -26,7 +26,7 @@ enum {
 	R_B, // 뺵하면서 오른쪽으로 가는 것
 	STOP,
 	ROTATE_180 // 180도 회전 시키기
-};
+}CAR_CONTROL_DIR;
 
 class Car {
 

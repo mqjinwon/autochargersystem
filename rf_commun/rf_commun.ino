@@ -2,9 +2,9 @@
 #define ENDBIT '@'
 
 
-enum{
+typedef enum{
   example
-}typedef data_mode;
+}typedef DATA_MODE;
 
 unsigned char c;  // variable to store the received character
 

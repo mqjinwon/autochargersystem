@@ -10,13 +10,13 @@ using namespace std;
 #define MAP_COL 10 // 배열기준(0부터 시작)
 
 //direction
-enum {
+typedef enum {
 	NODIR = 0, //0          1
 	L, U, R, D, //1~4       4
 	LU, UR, RD, DL, //5~8   4
 	LUR, URD, RDL, //9~11   3
 	LURD //12               1
-};
+} MAP_DIR;
 
 class Map {
 
