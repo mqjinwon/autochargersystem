@@ -1,6 +1,8 @@
 #pragma once
 #include "tracemap.h"
 
+static int carID = 0;
+
 //차의 상태를 표현하는 변수
 enum {
 	GOING_PICK_STUFF = 0,
@@ -29,6 +31,7 @@ enum {
 class Car {
 
 private:
+	int id = carID++; // 차 아이디 부여하기
 	int working_state; //현재 하고 있는 일 상태 표현
 	int process = 0; //경로까지 진행상황, 초기상태 0
 	int car_dir = 0; //차의 방향
@@ -94,4 +97,8 @@ public:
 		return path.size() - process - 1; // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
 	}
 
+	int getCarID() {
+		return id;
+	}
+		
 };

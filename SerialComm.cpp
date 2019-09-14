@@ -10,7 +10,7 @@ int CSerialComm::connect(const char* _portNum)
 	if (!serial.OpenPort(_portNum))
 		return RETURN_FAIL;
 
-	serial.ConfigurePort(CBR_115200, 8, FALSE, NOPARITY, ONESTOPBIT);
+	serial.ConfigurePort(CBR_9600, 8, FALSE, NOPARITY, ONESTOPBIT);
 	serial.SetCommunicationTimeouts(0, 0, 0, 0, 0);
 
 	return RETURN_SUCCESS;

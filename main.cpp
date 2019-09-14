@@ -1,22 +1,50 @@
+#include "SerialComm.h"
+static CSerialComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
+
 #include <iostream>
 #include <vector>
 #include <queue>
 #include "tracemap.h"
 #include "Linetracer.h"
-#include "SerialComm.h"
 
 using namespace std;
 
+#define PORTNUM "COM15"
 
-static CSerialComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
+
+
+
+
+
 
 
 int main(){
-
+	
 	vector<vector<int>> full_map;
 	Car car;
     Map tmp;
+	
+	BYTE data;
+	while (1) {
+		// STEP 1. SerialPort Connect
+		if (!serial.connect(PORTNUM)) {
+			printf("connect faliled\n");
+		}
+		else {
+			printf("connect successed\n");
+			break;
+		}
+		Sleep(500);
+	}
 
+	serial.sendCommand('a');
+	while (1) {
+		if (serial.recvCommand(data)) {
+			cout << "data : " << data << endl;
+			
+			break;
+		}
+	}
 
     for(int row =0; row<=MAP_ROW; row++){
         for(int col=0; col<=MAP_COL; col++){
@@ -138,5 +166,6 @@ int main(){
 		cout << endl;
 	}
 
+	serial.disconnect(); //마지막에 시리얼 통신 끊어준다.
     return 0;
 }
