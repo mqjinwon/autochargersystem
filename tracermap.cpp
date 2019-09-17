@@ -72,9 +72,9 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		depth = pre_data[2] + 1;
 		parent = pre_data[3];
 
-		//안내용 --------------------------------------------------------------------------------------------나중에 지워야지 빨라짐!!
-		cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : "
-			<< pre_data[2] << ", id : " << pre_data[3] << ", parent : " << pre_data[4] << endl;
+		////안내용 --------------------------------------------------------------------------------------------나중에 지워야지 빨라짐!!
+		//cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : "
+		//	<< pre_data[2] << ", id : " << pre_data[3] << ", parent : " << pre_data[4] << endl;
 
 		//목표위치를 찾으면 탈출
 		if (pre_data[0] == e_x && pre_data[1] == e_y) {

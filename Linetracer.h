@@ -33,22 +33,21 @@ class Car {
 private:
 	const int id = carID++; // 차 아이디 부여하기
 	bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
-	int working_state; //현재 하고 있는 일 상태 표현
-	int process = 0; //경로까지 진행상황, 초기상태 0
-	int car_dir = 0; //차의 방향
-	int car_pos[2] = { 0, }; // 차가 현재 있는 위치
+	int workingState; //현재 하고 있는 일 상태 표현
+	long process = 0; //경로까지 진행상황, 초기상태 0
+	long prePathLen = 0; // 가지고 있었던 경로의 길이
+	pair<int, int> carPos; // 차가 현재 있는 위치
 
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
 
 public:
 	Car() {
-		working_state = WORK_WAIT;
+		workingState = WORK_WAIT;
 		chargeFlag = false;
 	}
 	Car(int x, int y) {
-		car_pos[0] = x;
-		car_pos[1] = y;
+		carPos = make_pair(x, y);
 	}
 
 	//차가 가야하는 경로를 넣음
@@ -56,9 +55,12 @@ public:
 		if (path.size() == 0)
 			return false;
 		else {
+			putPrePathLen(pathLength()); // 지금까지의 path 경로를 담는다.
 			for (int i = 0; i < path.size(); i++) {
 				this->path.push_back(path[path.size() - 1 - i]);
 			}
+
+			putRealPath();
 			return true;
 		}
 	}
@@ -74,6 +76,7 @@ public:
 				<< path[i][2] << ", id : " << path[i][3] << ", parent : " << path[i][4] << endl;
 			return path[i];
 		}
+
 	}
 
 	//차를 조종하기 위한 실제 경로를 만들어줌
@@ -91,7 +94,7 @@ public:
 
 	//경로의 길이 반환
 	int pathLength() {
-		return path.size() - 1; // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
+		return path.size();
 	}
 
 	//실제경로의 명령어길이 반환
@@ -110,8 +113,8 @@ public:
 		
 	bool putCarPos(int x, int y) {
 		if (x >= 0 && x < MAP_COL && y >=0 && y < MAP_ROW) {
-			car_pos[0] = x;
-			car_pos[1] = y;
+			carPos.first = x;
+			carPos.second = y;
 
 			return true;
 		}
@@ -119,8 +122,8 @@ public:
 			return false;
 		}
 	}
-	int* getCarPos() {
-		return car_pos;
+	pair<int,int> getCarPos() {
+		return carPos;
 	}
 
 	void putChargeFlag(bool flag) {
@@ -129,5 +132,13 @@ public:
 
 	bool getChargeFlag() {
 		return chargeFlag;
+	}
+
+	void putPrePathLen(int len) {
+		prePathLen = len;
+	}
+
+	int getPrePathLen() {
+		return prePathLen;
 	}
 };
