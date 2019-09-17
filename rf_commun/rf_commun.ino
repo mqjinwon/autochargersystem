@@ -1,10 +1,15 @@
+#include <SoftwareSerial.h>
+
 #define STARTBIT '#'
 #define ENDBIT '@'
+#define LINE_RX "A5"
+#define LINE_TX "A4"
 
+SoftwareSerial lineSerial(LINE_RX, LINE_TX);
 
 typedef enum{
   example
-}typedef DATA_MODE;
+} DATA_MODE;
 
 unsigned char c;  // variable to store the received character
 
@@ -20,6 +25,9 @@ void setup() {
 }
   
 void loop() {
+
+  int sensorValue = analogRead(A3);
+
 
   //수신 소스(에코)
   if(Serial.available() > 0){

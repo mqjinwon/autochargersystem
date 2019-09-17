@@ -1,16 +1,14 @@
 #pragma once
 #include "tracemap.h"
 
-static int carID = 0;
+static int carID = 0; //차에 아이디 부여하는 변수
 
 //차의 상태를 표현하는 변수
 typedef enum {
 	GOING_PICK_STUFF = 0,
 	GOING_DELIVER_STUFF,
-	LIFT_UP,
-	LIFT_DOWN,
 	WORK_WAIT,
-	COMPLETE_CHARGE_WAIT,
+	//COMPLETE_CHARGE_WAIT, //왜 필요했었는지 의문(그냥 WORK_WAIT으로 대체)
 	GOING_CHARGE,
 	CHARGING,
 	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
@@ -25,16 +23,20 @@ typedef enum {
 	L_B, // 빽하면서 왼쪽으로 가는 것	
 	R_B, // 뺵하면서 오른쪽으로 가는 것
 	STOP,
-	ROTATE_180 // 180도 회전 시키기
+	ROTATE_180, // 180도 회전 시키기
+	LIFT_UP,
+	LIFT_DOWN,
 }CAR_CONTROL_DIR;
 
 class Car {
 
 private:
-	int id = carID++; // 차 아이디 부여하기
+	const int id = carID++; // 차 아이디 부여하기
+	bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
 	int working_state; //현재 하고 있는 일 상태 표현
 	int process = 0; //경로까지 진행상황, 초기상태 0
 	int car_dir = 0; //차의 방향
+	int car_pos[2] = { 0, }; // 차가 현재 있는 위치
 
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
@@ -42,6 +44,11 @@ private:
 public:
 	Car() {
 		working_state = WORK_WAIT;
+		chargeFlag = false;
+	}
+	Car(int x, int y) {
+		car_pos[0] = x;
+		car_pos[1] = y;
 	}
 
 	//차가 가야하는 경로를 넣음
@@ -101,4 +108,26 @@ public:
 		return id;
 	}
 		
+	bool putCarPos(int x, int y) {
+		if (x >= 0 && x < MAP_COL && y >=0 && y < MAP_ROW) {
+			car_pos[0] = x;
+			car_pos[1] = y;
+
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	int* getCarPos() {
+		return car_pos;
+	}
+
+	void putChargeFlag(bool flag) {
+		chargeFlag = flag;
+	}
+
+	bool getChargeFlag() {
+		return chargeFlag;
+	}
 };
