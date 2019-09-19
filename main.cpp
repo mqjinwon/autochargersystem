@@ -160,6 +160,8 @@ int main(){
 	car.putPath(full_map);
 
 	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
+	
+	cout << "linetracer path!!!" << endl;
 
 	for (int i = 0; i < car.pathLength(); i++) {
 		map[car.getPath(i)[1]][car.getPath(i)[0]] = 1;
@@ -178,17 +180,9 @@ int main(){
 		case GO_R:
 			cout << "GO_R" << "\t";
 			break;
-		case GO_B:
-			cout << "GO_B" << "\t";
-			break;
+
 		case GO_L:
 			cout << "GO_L" << "\t";
-			break;
-		case L_B:
-			cout << "L_B" << "\t";
-			break;
-		case R_B:
-			cout << "R_B" << "\t";
 			break;
 		case STOP:
 			cout << "STOP" << "\t";

@@ -20,8 +20,7 @@ typedef enum {
 	GO_R, // right 오른쪽으로 가는 것
 	GO_B, // backward 뒤쪽으로 가는 것
 	GO_L, // left 왼쪽으로 가는 것
-	L_B, // 빽하면서 왼쪽으로 가는 것	
-	R_B, // 뺵하면서 오른쪽으로 가는 것
+	CHARGE_OUT, //충전하고 나갈 때,
 	STOP,
 	ROTATE_180, // 180도 회전 시키기
 	LIFT_UP,
@@ -33,10 +32,12 @@ class Car {
 private:
 	const int id = carID++; // 차 아이디 부여하기
 	bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
-	int workingState; //현재 하고 있는 일 상태 표현
-	long process = 0; //경로까지 진행상황, 초기상태 0
-	long prePathLen = 0; // 가지고 있었던 경로의 길이
+	int workingState; //현재 상태 표현
+	long process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
+	long prePathLen = 0; // 가지고 있었던 절대 경로의 길이
+	long preRealPathLen = 0; //가지고 있었던 실제 경로의 길이
 	pair<int, int> carPos; // 차가 현재 있는 위치
+	pair<int, int> carDestin; //차가 마지막에 가려고 하는 곳
 
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
@@ -55,10 +56,13 @@ public:
 		if (path.size() == 0)
 			return false;
 		else {
-			putPrePathLen(pathLength()); // 지금까지의 path 경로를 담는다.
+			putPrePathLen(pathLength()); // 지금까지의 절대 경로를 담는다.
+			putPreRealPathLen(realpathLength()); // 지금까지의 절대 경로를 담는다.
+
 			for (int i = 0; i < path.size(); i++) {
 				this->path.push_back(path[path.size() - 1 - i]);
 			}
+
 
 			putRealPath();
 			return true;
@@ -102,9 +106,9 @@ public:
 		return realpath.size(); // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
 	}
 
-	//남은 경로 길이 반환
+	//남은 실제 경로 길이 반환
 	int remainPathLength() {
-		return path.size() - process - 1; // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
+		return realpathLength() - process - 1; // 실제 가는 길이는 처음 시작하는 경로를 빼야하기 때문에...
 	}
 
 	int getCarID() {
@@ -126,6 +130,21 @@ public:
 		return carPos;
 	}
 
+	bool putLastCarPos(int x, int y) {
+		if (x >= 0 && x < MAP_COL && y >= 0 && y < MAP_ROW) {
+			carPos.first = x;
+			carPos.second = y;
+
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	pair<int, int> getLastCarPos() {
+		return carPos;
+	}
+
 	void putChargeFlag(bool flag) {
 		chargeFlag = flag;
 	}
@@ -139,6 +158,14 @@ public:
 	}
 
 	int getPrePathLen() {
+		return prePathLen;
+	}
+
+	void putPreRealPathLen(int len) {
+		prePathLen = len;
+	}
+
+	int getPreRealPathLen() {
 		return prePathLen;
 	}
 };

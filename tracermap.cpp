@@ -45,6 +45,8 @@ Map::Map() {
 
 vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 {
+	cout << "BFS route!!!!" << endl;
+
 	int depth = 0; //깊이
 	int dir = 0; // 갈 수 있는 방향을 알려주는 변수
 	int parent = -1;
@@ -73,12 +75,14 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 		parent = pre_data[3];
 
 		////안내용 --------------------------------------------------------------------------------------------나중에 지워야지 빨라짐!!
-		//cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : "
-		//	<< pre_data[2] << ", id : " << pre_data[3] << ", parent : " << pre_data[4] << endl;
+		cout << "x : " << pre_data[0] << ", y : " << pre_data[1] << ", depth : "
+			<< pre_data[2] << ", id : " << pre_data[3] << ", parent : " << pre_data[4] << endl;
 
 		//목표위치를 찾으면 탈출
 		if (pre_data[0] == e_x && pre_data[1] == e_y) {
 			path.push_back(pre_data); // 맨처음 데이터 저장
+
+
 
 			//실제 경로 담기 위한 부분
 			vector<int> tmp = pre_data;

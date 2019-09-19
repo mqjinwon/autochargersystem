@@ -30,7 +30,7 @@ bool Car::putRealPath() {
 		위로 가면 우회전
 		아래로 가면 좌회전
 */
-	for (int i = prePathLen-1; i < pathLength()-1; i++) {
+	for (int i = prePathLen-2; i < pathLength()-1; i++) {
 		if (i < 0) i = 0; // 맨처음 예외처리
 
 		pre_gap_x = now_gap_x; pre_gap_y = now_gap_y; // 이전 경로 저장
@@ -47,7 +47,7 @@ bool Car::putRealPath() {
 
 		/*마지막에 충전기 들어가기 직전이라면*/
 		if ((i == pathLength()-2) && ((now_x == 9 && now_y == 2) || (now_x == 9 && now_y == 5))) {
-			mode = 2; //충전소 가기 직전
+			mode = 1; //충전소 가기 직전
 		}
 		else if ((now_y == 2) || (now_y == 3) || (now_y == 4) || (now_y == 5)) {
 			//충전기쪽에 있을 때
@@ -59,9 +59,9 @@ bool Car::putRealPath() {
 
 			//화물쪽에 있을 때
 			else if ((now_x == 2) || (now_x == 3) || (now_x == 6) || (now_x == 7)) {
-				realpath.push_back(GO_B);
 				//처음에 나오게 되면 뒷꽁무니로 나오므로 처리를 해줘야한다.
-				mode = 1; // 역방향
+				realpath.push_back(ROTATE_180);
+				realpath.push_back(GO_F);
 				continue;
 			}
 		}
@@ -95,23 +95,15 @@ bool Car::putRealPath() {
 			break;
 		case 1:
 			result = count % 4;
-			result = (4 - result) % 4;
 			if (result == GO_F) {
-				realpath.push_back(ROTATE_180);
 				realpath.push_back(GO_F);
-			}
-			else
-				realpath.push_back(result);
-			mode = 0;
-			break;
-		case 2:
-			result = count % 4;
-			if (result == GO_F) {
 				realpath.push_back(ROTATE_180);
-				realpath.push_back(GO_B);
 			}
-			else
-				realpath.push_back(R_B);
+			else {
+				realpath.push_back(GO_R);
+				realpath.push_back(ROTATE_180);
+			}
+
 			mode = 0;
 			break;
 
