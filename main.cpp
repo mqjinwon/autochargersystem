@@ -1,9 +1,15 @@
-#include "SerialComm.h"
-static CSerialComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
+#include "Comm.h"
+static CComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
 
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <time.h>
+#include <Windows.h>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+
 #include "tracemap.h"
 #include "Linetracer.h"
 
@@ -11,29 +17,44 @@ using namespace std;
 
 #define PORTNUM "COM15"
 
+///////////////////////////////////////////////////충전알고리즘에서 사용하는 부분
+
+static float min_rule[4] = { 15.0, 15.0, 30,30 };   //부여받을 수 있는 일의 최대량보다는 커야 함.
+													//두 값의 차이도 위 값보다는 커야 함.
+													//안그러면 값이 음수로 내려가버릴 때가 생김.
+													//rule의 모든 값을 A만큼 올려주면 배터리가 절대로 A이하로 안내려감.
+													//static float max_rule[N] = { 60.0, 70.0, 80,90 };
+static float max_rule[4] = { 90.0, 90.0, 90,90 };
+
+
 
 //실제 일들을 처리할 부분
 void processing(vector<Car> carLIst) {
 
 	/////step 1. initilizing part/////
-
+	
 	int carNum = carLIst.size(); // 몇대의 차가 있는지 확인하기 위한 변수
-	vector<int> batterysize(carNum); // 배터리 값을 받기 위해서 사용하는 녀석
+	vector<int> batterySize(carNum); // 배터리 값을 받기 위해서 사용하는 녀석
+
 	Map map; // 전체 맵에 대한 것 선언
 
 	//serial port connection
-	BYTE data;
+	const char *data;
+
+	time_t start, end; //시간을 알려주는 변수
+
 	while (1) {
 		
-		if (!serial.connect(PORTNUM)) {
+		if (!serial.Open(PORTNUM, 115200)) {
 			printf("connect faliled\n");
 		}
 		else {
 			printf("connect successed\n");
 			break;
 		}
-		Sleep(500);
 	}
+
+
 	
 	//main process
 	while (1) {
@@ -51,17 +72,93 @@ void processing(vector<Car> carLIst) {
 
 
 		/////step 4. route checking/////
+		//통신은 #id@를 보내게 된다.
+
+		//모든 차들에게 물어봐야하므로 이렇게 ㄱㄱ
+		for (int _id = 0; _id < carNum; _id++) {
+			data = "#id@";
+			serial.Write(data, 256);
+
+			start = time(NULL);
+
+			while (1) {
+
+				if (time(NULL) - start > 1000) {
+					cerr << "timeout!!" << endl;
+					break;
+				}
+			}
+		}
+
+
 	}
+
+	serial.Close();
 
 }
 
-
-
+float battery[4] = { 83.7, 76.5, 92.5, 57.7 };
 
 
 
 int main(){
 
+	/*srand((unsigned int)time(NULL));
+	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+
+	Sleep(500);
+
+	cout << "==================================================================" << endl;
+	cout << "success connecting to COM17" << endl;
+	cout << "==================================================================" << endl << endl;
+	Sleep(100);
+	cout << "give path to 1 AGV" << endl;
+	Sleep(200);
+	cout << "give path to 2 AGV" << endl;
+	Sleep(200);
+	cout << "give path to 3 AGV" << endl;
+	Sleep(200);
+	cout << "give path to 4 AGV" << endl << endl;
+	Sleep(200);
+	int count = 0;
+
+	while (1) {
+
+		std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+
+		std::chrono::milliseconds mill = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+		cout << "==================================================================" << endl;
+		cout << "running time : ";
+		if(mill.count() / 60000 >0)
+			cout << mill.count() / 60000 << "min ";
+
+		cout << (mill.count() % 60000) / 1000.0 << "sec" << endl;
+		cout << "==================================================================" << endl << endl;
+
+
+		for (int i = 0; i < 4; i++) {
+			cout << "checking battery status" << endl;
+			cout << "AGV" << i << " : " << battery[i] << endl;;
+
+			Sleep(500);
+
+			if(count >= 1)
+				battery[i] -= (rand() % 100) / 1000.0;
+		}
+
+
+		count++;
+		cout << endl;
+
+
+		Sleep(1000);
+	}
+*/
+
+	
+
+	
 	//vector<Car> linetracer;
 
 	//linetracer.push_back(Car(2, 2));
@@ -77,28 +174,6 @@ int main(){
 	Car car;
     Map tmp;
 	
-	//BYTE data;
-	//while (1) {
-	//	// STEP 1. SerialPort Connect
-	//	if (!serial.connect(PORTNUM)) {
-	//		printf("connect faliled\n");
-	//	}
-	//	else {
-	//		printf("connect successed\n");
-	//		break;
-	//	}
-	//	Sleep(500);
-	//}
-
-	//serial.sendCommand('a');
-	//while (1) {
-	//	if (serial.recvCommand(data)) {
-	//		cout << "data : " << data << endl;
-	//		
-	//		break;
-	//	}
-	//}
-
     for(int row =0; row<=MAP_ROW; row++){
         for(int col=0; col<=MAP_COL; col++){
 			switch (tmp.getPos(col, row)) {
@@ -149,6 +224,10 @@ int main(){
     }
 
 	full_map = tmp.BFS(7, 2, 10, 2);
+
+	cout << "hhhhhhhhhhhhhhhhhhhhhhhhhhh" << tmp.BFS(1,1,2,3).size() << endl;
+
+
 	car.putPath(full_map);
 	full_map = tmp.BFS(10, 2, 3, 5);
 	car.putPath(full_map);
@@ -201,7 +280,5 @@ int main(){
 		}
 		cout << endl;
 	}
-
-	serial.disconnect(); //마지막에 시리얼 통신 끊어준다.
     return 0;
 }

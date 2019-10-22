@@ -31,11 +31,16 @@ class Car {
 
 private:
 	const int id = carID++; // 차 아이디 부여하기
-	bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
-	int workingState; //현재 상태 표현
-	long process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
-	long prePathLen = 0; // 가지고 있었던 절대 경로의 길이
-	long preRealPathLen = 0; //가지고 있었던 실제 경로의 길이
+
+	float bat; // 배터리 잔량 표시 변수
+	float remain_work_bat;   //현재 하고있는 일의 거리에 해당하는 배터리가 저장
+	float remain_chrg_bat;   //충전소까지 가는 거리에 해당하는 배터리가 저장
+
+	//bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
+	int workingState; //현재 상태 표현, CAR_STATUS
+	long long int process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
+	long long int prePathLen = 0; // 가지고 있었던 절대 경로의 길이
+	long long int preRealPathLen = 0; //가지고 있었던 실제 경로의 길이
 	pair<int, int> carPos; // 차가 현재 있는 위치
 	pair<int, int> carDestin; //차가 마지막에 가려고 하는 곳
 
@@ -45,7 +50,7 @@ private:
 public:
 	Car() {
 		workingState = WORK_WAIT;
-		chargeFlag = false;
+		//chargeFlag = false;
 	}
 	Car(int x, int y) {
 		carPos = make_pair(x, y);
@@ -145,13 +150,13 @@ public:
 		return carPos;
 	}
 
-	void putChargeFlag(bool flag) {
-		chargeFlag = flag;
-	}
+	//void putChargeFlag(bool flag) {
+	//	chargeFlag = flag;
+	//}
 
-	bool getChargeFlag() {
-		return chargeFlag;
-	}
+	//bool getChargeFlag() {
+	//	return chargeFlag;
+	//}
 
 	void putPrePathLen(int len) {
 		prePathLen = len;
@@ -169,3 +174,5 @@ public:
 		return prePathLen;
 	}
 };
+
+static Car robot[4];

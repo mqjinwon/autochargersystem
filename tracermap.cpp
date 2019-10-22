@@ -33,10 +33,9 @@ Map::Map() {
 		pos[6][2] = L; pos[6][3] = L; pos[6][6] = L; pos[6][7] = L;
 
 
-		//id 0~마지막 숫자,ischeck TRUE로 초기화
+		//ischeck TRUE로 초기화
 		for (int row = 0; row <= MAP_ROW; row++)
 			for (int col = 0; col <= MAP_COL; col++) {
-				id[row][col] = row * (col + 1) + col;
 				ischecked[row][col] = true;
 			}
 
