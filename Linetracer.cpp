@@ -30,7 +30,7 @@ bool Car::putRealPath() {
 		위로 가면 우회전
 		아래로 가면 좌회전
 */
-	for (int i = prePathLen-2; i < pathLength()-1; i++) {
+	for (int i = preRealPathLen-2; i < pathLength()-1; i++) {
 		if (i < 0) i = 0; // 맨처음 예외처리
 
 		pre_gap_x = now_gap_x; pre_gap_y = now_gap_y; // 이전 경로 저장

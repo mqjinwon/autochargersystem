@@ -225,9 +225,6 @@ int main(){
 
 	full_map = tmp.BFS(7, 2, 10, 2);
 
-	cout << "hhhhhhhhhhhhhhhhhhhhhhhhhhh" << tmp.BFS(1,1,2,3).size() << endl;
-
-
 	car.putPath(full_map);
 	full_map = tmp.BFS(10, 2, 3, 5);
 	car.putPath(full_map);
