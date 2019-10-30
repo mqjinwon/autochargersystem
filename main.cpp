@@ -224,16 +224,15 @@ int main(){
     }
 
 	full_map = tmp.BFS(7, 2, 10, 2);
-
 	car.putPath(full_map);
 	full_map = tmp.BFS(10, 2, 3, 5);
 	car.putPath(full_map);
 
-	full_map = tmp.BFS(3, 5, 6, 3);
-	car.putPath(full_map);
+	//full_map = tmp.BFS(3, 5, 6, 3);
+	//car.putPath(full_map);
 
-	full_map = tmp.BFS(6, 3, 1, 1);
-	car.putPath(full_map);
+	//full_map = tmp.BFS(6, 3, 1, 1);
+	//car.putPath(full_map);
 
 	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
 	
@@ -265,6 +264,12 @@ int main(){
 			break;
 		case ROTATE_180:
 			cout << "ROTATE_180" << "\t";
+			break;
+		case F_STOP:
+			cout << "F_STOP" << "\t";
+			break;
+		case FLAG:
+			cout << "FLAG" << "\t";
 			break;
 		}
 	}

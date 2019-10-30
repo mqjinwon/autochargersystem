@@ -24,7 +24,8 @@ typedef enum {
 	ROTATE_180, // 180도 회전 시키기
 	LIFT_UP,
 	LIFT_DOWN,
-	F_STOP // 강제로 멈추게 하기
+	F_STOP, // 강제로 멈추게 하기
+	FLAG //이 명령이 나올 때 CAR_STATUS를 비교할 수 있게 만든다.(물건을 집으러 갔을 떄 발동)
 }CAR_CONTROL_DIR;
 
 class Car {
@@ -39,15 +40,15 @@ private:
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
 
+	int routeIdx = 0; //route를 가르키는 index (0,1을 사용)
+	int route[2] = { F_STOP, F_STOP }; //두칸씩 저장하고 있는 경로
+
 public:
 	int workingState; //현재 상태 표현, CAR_STATUS
 	float bat; // 배터리 잔량 표시 변수
 	long long int process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
 	float remain_work_bat; //현재 하고있는 일의 거리에 해당하는 배터리가 저장
 	float remain_chrg_bat; //충전소까지 가는 거리에 해당하는 배터리가 저장
-
-	int routeIdx = 0; //route를 가르키는 index (0,1을 사용)
-	int route[2] = { F_STOP, F_STOP }; //두칸씩 저장하고 있는 경로
 
 	Car() {
 		workingState = WORK_WAIT;
@@ -160,8 +161,24 @@ public:
 		return prePathLen;
 	}
 
-};
+	//route index를 바꿔주는 함수
+	void putRouteIdx(int i) {
+		routeIdx = i;
+	}
 
+	//route index를 받아오는 함수
+	int getRouteIdx() {
+		return routeIdx;
+	}
+
+	//route에 값을 넣어주는 함수
+	bool putRoute();
+
+	int* getRoute() {
+		return route;
+	}
+
+};
 
 //차 네대 생성
 static Car robot[4];

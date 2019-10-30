@@ -30,7 +30,7 @@ bool Car::putRealPath() {
 		위로 가면 우회전
 		아래로 가면 좌회전
 */
-	for (int i = preRealPathLen-2; i < pathLength()-1; i++) {
+	for (int i = prePathLen-1; i < pathLength()-1; i++) {
 		if (i < 0) i = 0; // 맨처음 예외처리
 
 		pre_gap_x = now_gap_x; pre_gap_y = now_gap_y; // 이전 경로 저장
@@ -41,7 +41,7 @@ bool Car::putRealPath() {
 
 		//같은 좌표가 나올때 -- 다음경로가 추가가 될 때...
 		if (now_gap_x == 0 && now_gap_y == 0) {
-			realpath.push_back(STOP);
+			realpath.push_back(FLAG);
 			continue;
 		}
 
@@ -97,7 +97,7 @@ bool Car::putRealPath() {
 			result = count % 4;
 			if (result == GO_F) {
 				realpath.push_back(GO_F);
-				realpath.push_back(ROTATE_180);
+				realpath.push_back(STOP);
 			}
 			else {
 				realpath.push_back(GO_R);
@@ -111,6 +111,35 @@ bool Car::putRealPath() {
 			cerr << "error" << endl;
 		}
 	}
+
+	return true;
+}
+
+bool Car::putRoute() {
+
+	//마지막 경로일 때
+	if (process + 1 == realpathLength()) {
+
+		//두번째 경로가 멈춤일 경우! -- 충돌방지 알고리즘 후 예외처리를 하기 위해
+		if (route[1] != F_STOP) {
+			route[0] = route[1];
+			route[1] = F_STOP;
+		}
+		//두번째 경로가 멈춤이 아닐 경우!
+		else {
+			route[0] = realpath[process];
+			route[1] = realpath[process + 1];
+		}
+
+	}
+
+
+
+	//마지막 경로가 아닐 때
+	route[0] = route[1];
+	route[1] = realpath[process + 1];
+
+	//언제 상태에 따른 행동을 넣어주지...?!
 
 	return true;
 }
