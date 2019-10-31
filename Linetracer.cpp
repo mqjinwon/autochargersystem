@@ -115,17 +115,33 @@ bool Car::putRealPath() {
 	return true;
 }
 
+/*
+//차의 상태를 표현하는 변수
+typedef enum {
+	GOING_PICK_STUFF = 0,
+	GOING_DELIVER_STUFF,
+	WORK_WAIT,
+	GOING_CHARGE,
+	CHARGING,
+	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
+}CAR_STATUS;
+*/
 bool Car::putRoute() {
+
+	//FLAG가 나오면 상태를 확인하고 그에 따른 행동을 넣어준다.
+	if (realpath[process + 1] == FLAG) {
+		
+	}
 
 	//마지막 경로일 때
 	if (process + 1 == realpathLength()) {
 
-		//두번째 경로가 멈춤일 경우! -- 충돌방지 알고리즘 후 예외처리를 하기 위해
+		//두번째 경로가 멈춤이 아닐 경우! -- 충돌방지 알고리즘 후 예외처리를 하기 위해
 		if (route[1] != F_STOP) {
 			route[0] = route[1];
 			route[1] = F_STOP;
 		}
-		//두번째 경로가 멈춤이 아닐 경우!
+		//두번째 경로가 멈춤일 경우!
 		else {
 			route[0] = realpath[process];
 			route[1] = realpath[process + 1];
@@ -133,7 +149,7 @@ bool Car::putRoute() {
 
 	}
 
-
+	
 
 	//마지막 경로가 아닐 때
 	route[0] = route[1];

@@ -6,7 +6,6 @@ static int carID = 0; //차에 아이디 부여하는 변수
 //차의 상태를 표현하는 변수
 typedef enum {
 	GOING_PICK_STUFF = 0,
-	GOING_DELIVER_STUFF,
 	WORK_WAIT,
 	GOING_CHARGE,
 	CHARGING,
@@ -15,7 +14,7 @@ typedef enum {
 
 //차 조종하기 위한 방향
 typedef enum {
-	GO_F, // forward 앞으로 가는 것
+	GO_F = 0, // forward 앞으로 가는 것
 	GO_R, // right 오른쪽으로 가는 것
 	GO_B, // backward 뒤쪽으로 가는 것
 	GO_L, // left 왼쪽으로 가는 것
@@ -33,8 +32,8 @@ class Car {
 private:
 	const int id = carID++; // 차 아이디 부여하기
 	//bool chargeFlag = false; //충전해야하는 놈인지 아닌 지를 표현하는 변수
-	long long int prePathLen = 0; // 가지고 있었던 절대 경로의 길이
-	long long int preRealPathLen = 0; //가지고 있었던 실제 경로의 길이
+	int prePathLen = 0; // 가지고 있었던 절대 경로의 길이
+	int preRealPathLen = 0; //가지고 있었던 실제 경로의 길이
 	pair<int, int> carPos; // 차가 현재 있는 위치
 	pair<int, int> carDestin; //차가 마지막에 가려고 하는 곳
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
@@ -46,7 +45,7 @@ private:
 public:
 	int workingState; //현재 상태 표현, CAR_STATUS
 	float bat; // 배터리 잔량 표시 변수
-	long long int process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
+	int process = 0; //경로까지 진행상황, 초기상태 0 - realpath가 움직일 때 마다 증가 시킨다.
 	float remain_work_bat; //현재 하고있는 일의 거리에 해당하는 배터리가 저장
 	float remain_chrg_bat; //충전소까지 가는 거리에 해당하는 배터리가 저장
 
@@ -101,6 +100,11 @@ public:
 		else {
 			return realpath[i];
 		}
+	}
+
+	//실제 경로 바꿔주는 함수
+	void changeRealPath(int idx,int dir) {
+		realpath[idx] = dir;
 	}
 
 	//경로의 길이 반환(pc입장)
