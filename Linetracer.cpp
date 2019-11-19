@@ -126,12 +126,8 @@ typedef enum {
 	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
 }CAR_STATUS;
 */
-bool Car::putRoute() {
 
-	//FLAG가 나오면 상태를 확인하고 그에 따른 행동을 넣어준다.
-	if (realpath[process + 1] == FLAG) {
-		
-	}
+bool Car::putRoute() {
 
 	//마지막 경로일 때
 	if (process + 1 == realpathLength()) {
@@ -141,6 +137,7 @@ bool Car::putRoute() {
 			route[0] = route[1];
 			route[1] = F_STOP;
 		}
+
 		//두번째 경로가 멈춤일 경우!
 		else {
 			route[0] = realpath[process];
@@ -149,13 +146,11 @@ bool Car::putRoute() {
 
 	}
 
-	
-
 	//마지막 경로가 아닐 때
 	route[0] = route[1];
 	route[1] = realpath[process + 1];
 
-	//언제 상태에 따른 행동을 넣어주지...?!
+	//언제 상태에 따른 행동을 넣어주지...?! 필요없겠다...
 
 	return true;
 }

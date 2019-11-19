@@ -10,6 +10,18 @@ using namespace std;
 #define MAP_ROW 7 // 배열기준(0부터 시작)
 #define MAP_COL 10 // 배열기준(0부터 시작)
 
+#define STUFFNUM 16 //물건놓는 곳의 개수
+#define BATTERYNUM 2 //충전소 갯수
+
+//차의 상태를 표현하는 변수
+typedef enum {
+	GOING_WORK = 0,
+	WORK_WAIT,
+	GOING_CHARGE,
+	//CHARGING,
+	//CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
+}CAR_STATUS;
+
 //direction
 typedef enum {
 	NODIR = 0, //0          1
@@ -19,6 +31,12 @@ typedef enum {
 	LURD //12               1
 } MAP_DIR;
 
+typedef enum {
+	YES,
+	FLOATING,
+	NO
+}ISSTUFF;
+
 class Map {
 
 private:
@@ -26,6 +44,13 @@ private:
 	bool ischecked[MAP_ROW + 1][MAP_COL + 1]; // 갔던 곳은 체크해놔서 더이상 못가게 하기
 
 public:
+
+	int stuffLoc[STUFFNUM] = { YES, NO, YES, NO,
+								YES, YES, YES, NO,
+								NO, NO, NO, YES,
+								NO, YES, YES, NO }; // 왼쪽 좌측부터 오른쪽으로 세기 시작
+	bool batLoc[BATTERYNUM] = {true,}; // 배터리 충전 공간이 비었는지 안비었는지 알수 있는 변수, true 가 빈 것
+
 	Map();
 
 	int getPos(int x_col, int y_row) {
@@ -49,5 +74,9 @@ public:
 
 	//좌표값 반환
 	vector<vector<int>> BFS(int s_x, int s_y, int e_x, int e_y);
+
+	
+	//업무를 만들어서 줌 로봇이 일이 끝나고 있을 위치, 상태(일하러 가야하는지, 충전하러 가야하는지
+	vector<vector<int>> makeroute(int x, int y, int status);
 	
 };

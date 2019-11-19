@@ -3,15 +3,6 @@
 
 static int carID = 0; //차에 아이디 부여하는 변수
 
-//차의 상태를 표현하는 변수
-typedef enum {
-	GOING_PICK_STUFF = 0,
-	WORK_WAIT,
-	GOING_CHARGE,
-	CHARGING,
-	CANTCHARGE // 충전하러 가야하지만 충전소가 꽉찬상태
-}CAR_STATUS;
-
 //차 조종하기 위한 방향
 typedef enum {
 	GO_F = 0, // forward 앞으로 가는 것

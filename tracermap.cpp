@@ -1,6 +1,13 @@
 #include "tracemap.h"
 
 Map::Map() {
+
+	//배터리 초기화 부분
+	for (int i = 0; i < BATTERYNUM; i++) {
+		batLoc[i] = true;
+	}
+
+	//맵 설정 부분
 	{
 		pos[0][0] = D; pos[MAP_ROW][0] = R; pos[0][MAP_COL] = L; pos[MAP_ROW][MAP_COL] = U; //corner - 4
 		for (int row = 2; row <= MAP_ROW - 2; row++) {
@@ -39,7 +46,7 @@ Map::Map() {
 				ischecked[row][col] = true;
 			}
 
-		}
+	}
 }
 
 vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
@@ -216,5 +223,23 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 
 	return vector<vector<int>>();
 }
+
+vector<vector<int>> Map::makeroute(int x, int y, int status) {
+
+	switch (status) {
+		case GOING_WORK :
+
+			break;
+		case GOING_CHARGE :
+
+			break;
+
+		default :
+			break;
+	}
+
+	return vector<vector<int>>();
+}
+
 
 
