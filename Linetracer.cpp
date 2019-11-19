@@ -11,6 +11,8 @@ bool Car::putRealPath() {
 	int result = 0;
 	int find_x = pre_gap_x, find_y = pre_gap_y;
 
+	int workFlag = 0;
+
 /*
 	왼쪽 방향으로 있을 경우
 	- [2~5][3, 7] / [2, 10], [5, 10]
@@ -41,7 +43,8 @@ bool Car::putRealPath() {
 
 		//같은 좌표가 나올때 -- 다음경로가 추가가 될 때...
 		if (now_gap_x == 0 && now_gap_y == 0) {
-			realpath.push_back(FLAG);
+			realpath.push_back(LIFT_UP);
+			workFlag = 1;
 			continue;
 		}
 
@@ -110,6 +113,9 @@ bool Car::putRealPath() {
 		default:
 			cerr << "error" << endl;
 		}
+	}
+	if (workFlag == 1) {
+		realpath.push_back(LIFT_DOWN);
 	}
 
 	return true;

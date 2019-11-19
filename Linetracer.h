@@ -15,7 +15,6 @@ typedef enum {
 	LIFT_UP,
 	LIFT_DOWN,
 	F_STOP, // 강제로 멈추게 하기
-	FLAG //이 명령이 나올 때 CAR_STATUS를 비교할 수 있게 만든다.(물건을 집으러 갔을 떄 발동)
 }CAR_CONTROL_DIR;
 
 class Car {

@@ -58,6 +58,58 @@ void processing(vector<Car> carLIst) {
 	
 	//main process
 	while (1) {
+/*
+	bool crash_flag[4] = {0,0}
+	void 충돌방지 및 경로전송(i)
+	{
+		if(i가 충돌하려함)
+			현재 경로 index 저장
+			crash_flag[i] = 1;
+			stop의 경로 2개를 전송
+		else if(crash_flag[i] == 1)
+			index 복구
+			crash_flag[i] = 0;
+			경로 2개 전송
+		else
+			{index 유지}
+			경로 2개 전송
+	}
+
+
+		for(4){
+			if(충전중인가?){
+				충전알고리즘 실행
+				"i가 일하러가야되나, 계속 충전해야되나"가 나옴
+				if(일하러가야되면)
+					map.makeroute(현재x,y,일) -> 경로 반환, 이걸 저장해둠
+					충돌방지 및 경로전송
+				else if(계속 충전해야되면)
+				{}
+
+				배터리 증가시켜주기;
+			}
+			else if(일하는중인가?){
+				i한테 동작 하나 끝났냐고 물어봐라
+				recv
+				if (i가 동작 하나 끝냈냐 ? )
+				{
+					i의 상대, 절대좌표 갱신
+					if (i가 일이 아예 끝났나 ? )
+					{
+						충전알고리즘 실행
+						"i가 일해야되나, 충전해야되나"가 나옴.
+						map.makeroute(현재x,y,일/충전) -> 경로 반환, 이걸 저장해둠
+					}
+					else{}						
+					충돌방지 및 경로전송
+				}
+				else
+				{}
+				배터리 감소시켜주기;
+			}
+		}
+
+*/
 
 		/////step 2. battery checking/////
 		
@@ -176,25 +228,25 @@ int main(){
 	Car car;
     Map tmp;
 
-	for (int k = 0; k < 4; k++) {
-		for (int i = 0; i < 16; i++) {
-			cout << tmp.stuffLoc[i] << "  ";
-		}
+	//for (int k = 0; k < 4; k++) {
+	//	for (int i = 0; i < 16; i++) {
+	//		cout << tmp.stuffLoc[i] << "  ";
+	//	}
 
-		cout << endl;
+	//	cout << endl;
 
-		for (int i = 0; i < 4; i++) {
-			cout << "s : " << tmp.storedWork[i].first << ", e : " << tmp.storedWork[i].second << endl;;
-		}
+	//	for (int i = 0; i < 4; i++) {
+	//		cout << "s : " << tmp.storedWork[i].first << ", e : " << tmp.storedWork[i].second << endl;;
+	//	}
 
-		cout << endl;
+	//	cout << endl;
 
-		vector<vector<int>> hi = tmp.makeroute(rand()%10, rand()%6, GOING_WORK);
+	//	vector<vector<int>> hi = tmp.makeroute(rand()%10, rand()%6, GOING_WORK);
 
-		for (int i = 0; i < hi.size(); i++) {
-			cout << "x : " << hi[i][0] << ". y : " << hi[i][1] << endl;
-		}
-	}
+	//	for (int i = 0; i < hi.size(); i++) {
+	//		cout << "x : " << hi[i][0] << ". y : " << hi[i][1] << endl;
+	//	}
+	//}
 
 
 	
@@ -248,65 +300,60 @@ int main(){
     }
 
 
-	//여기부터 주석함
-	//full_map = tmp.BFS(7, 2, 10, 2);
-	//car.putPath(full_map);
-	//full_map = tmp.BFS(10, 2, 3, 5);
-	//car.putPath(full_map);
 
-	////full_map = tmp.BFS(3, 5, 6, 3);
-	////car.putPath(full_map);
+	full_map = tmp.makeroute(rand() % 10, rand() % 6, GOING_WORK);
+	car.putPath(full_map);
 
-	////full_map = tmp.BFS(6, 3, 1, 1);
-	////car.putPath(full_map);
+	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
+	
+	cout << "linetracer path!!!" << endl;
 
-	//int map[MAP_ROW+1][MAP_COL+1] = { 0, };
-	//
-	//cout << "linetracer path!!!" << endl;
+	for (int i = 0; i < car.pathLength(); i++) {
+		map[car.getPath(i)[1]][car.getPath(i)[0]] = 1;
+	}
 
-	//for (int i = 0; i < car.pathLength(); i++) {
-	//	map[car.getPath(i)[1]][car.getPath(i)[0]] = 1;
-	//}
+	cout << endl;
 
-	//cout << endl;
+	for (int i = 0; i < car.realpathLength(); i++) {
+		if (i % 10 == 0 && i != 0)
+			cout << endl;
 
-	//for (int i = 0; i < car.realpathLength(); i++) {
-	//	if (i % 10 == 0 && i != 0)
-	//		cout << endl;
+		switch (car.getRealPath(i)) {
+		case GO_F:
+			cout << "GO_F" << "\t";
+			break;
+		case GO_R:
+			cout << "GO_R" << "\t";
+			break;
 
-	//	switch (car.getRealPath(i)) {
-	//	case GO_F:
-	//		cout << "GO_F" << "\t";
-	//		break;
-	//	case GO_R:
-	//		cout << "GO_R" << "\t";
-	//		break;
+		case GO_L:
+			cout << "GO_L" << "\t";
+			break;
+		case STOP:
+			cout << "STOP" << "\t";
+			break;
+		case ROTATE_180:
+			cout << "ROTATE_180" << "\t";
+			break;
+		case LIFT_UP:
+			cout << "LIFT_UP" << "\t";
+			break;
+		case LIFT_DOWN:
+			cout << "LIFT_DOWN" << "\t";
+			break;
+		case F_STOP:
+			cout << "F_STOP" << "\t";
+			break;
+		}
+	}
 
-	//	case GO_L:
-	//		cout << "GO_L" << "\t";
-	//		break;
-	//	case STOP:
-	//		cout << "STOP" << "\t";
-	//		break;
-	//	case ROTATE_180:
-	//		cout << "ROTATE_180" << "\t";
-	//		break;
-	//	case F_STOP:
-	//		cout << "F_STOP" << "\t";
-	//		break;
-	//	case FLAG:
-	//		cout << "FLAG" << "\t";
-	//		break;
-	//	}
-	//}
+	cout << endl << endl;
 
-	//cout << endl << endl;
-
-	//for (int row = 0; row <= MAP_ROW; row++) {
-	//	for (int col = 0; col <= MAP_COL; col++) {
-	//		cout << map[row][col] << "\t";
-	//	}
-	//	cout << endl;
-	//}
+	for (int row = 0; row <= MAP_ROW; row++) {
+		for (int col = 0; col <= MAP_COL; col++) {
+			cout << map[row][col] << "\t";
+		}
+		cout << endl;
+	}
     return 0;
 }

@@ -82,13 +82,10 @@ public:
 			}
 	}
 
-
-
 	//좌표값 반환
 	vector<vector<int>> BFS(int s_x, int s_y, int e_x, int e_y);
-
 	
-	//업무를 만들어서 줌 로봇이 일이 끝나고 있을 위치, 상태(일하러 가야하는지, 충전하러 가야하는지)
+	//업무를 만들어서 줌, 로봇이 일이 끝난 후 있을 위치, 상태(일하러 가야하는지, 충전하러 가야하는지)
 	vector<vector<int>> makeroute(int x, int y, int status);
 	
 };
