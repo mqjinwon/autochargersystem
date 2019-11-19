@@ -103,6 +103,8 @@ float battery[4] = { 83.7, 76.5, 92.5, 57.7 };
 
 int main(){
 
+	srand(time(NULL));
+
 	/*srand((unsigned int)time(NULL));
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 
@@ -173,6 +175,24 @@ int main(){
 	vector<vector<int>> full_map;
 	Car car;
     Map tmp;
+
+	for (int i = 0; i < 16; i++) {
+		cout << tmp.stuffLoc[i] << "  " ;
+	}
+
+	cout << endl;
+
+	for (int i = 0; i < 4; i++) {
+		cout << "s : " << tmp.storedWork[i].first << ", e : " << tmp.storedWork[i].second << endl;;
+	}
+
+	cout << endl;
+
+	vector<vector<int>> hi = tmp.makeroute(0, 0, GOING_WORK);
+
+	for (int i = 0; i < hi.size(); i++) {
+		cout << "x : " << hi[i][0] << ". y : " << hi[i][1] << endl;
+	}
 	
     for(int row =0; row<=MAP_ROW; row++){
         for(int col=0; col<=MAP_COL; col++){
@@ -223,64 +243,66 @@ int main(){
         cout << endl;
     }
 
-	full_map = tmp.BFS(7, 2, 10, 2);
-	car.putPath(full_map);
-	full_map = tmp.BFS(10, 2, 3, 5);
-	car.putPath(full_map);
 
-	//full_map = tmp.BFS(3, 5, 6, 3);
+	//여기부터 주석함
+	//full_map = tmp.BFS(7, 2, 10, 2);
+	//car.putPath(full_map);
+	//full_map = tmp.BFS(10, 2, 3, 5);
 	//car.putPath(full_map);
 
-	//full_map = tmp.BFS(6, 3, 1, 1);
-	//car.putPath(full_map);
+	////full_map = tmp.BFS(3, 5, 6, 3);
+	////car.putPath(full_map);
 
-	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
-	
-	cout << "linetracer path!!!" << endl;
+	////full_map = tmp.BFS(6, 3, 1, 1);
+	////car.putPath(full_map);
 
-	for (int i = 0; i < car.pathLength(); i++) {
-		map[car.getPath(i)[1]][car.getPath(i)[0]] = 1;
-	}
+	//int map[MAP_ROW+1][MAP_COL+1] = { 0, };
+	//
+	//cout << "linetracer path!!!" << endl;
 
-	cout << endl;
+	//for (int i = 0; i < car.pathLength(); i++) {
+	//	map[car.getPath(i)[1]][car.getPath(i)[0]] = 1;
+	//}
 
-	for (int i = 0; i < car.realpathLength(); i++) {
-		if (i % 10 == 0 && i != 0)
-			cout << endl;
+	//cout << endl;
 
-		switch (car.getRealPath(i)) {
-		case GO_F:
-			cout << "GO_F" << "\t";
-			break;
-		case GO_R:
-			cout << "GO_R" << "\t";
-			break;
+	//for (int i = 0; i < car.realpathLength(); i++) {
+	//	if (i % 10 == 0 && i != 0)
+	//		cout << endl;
 
-		case GO_L:
-			cout << "GO_L" << "\t";
-			break;
-		case STOP:
-			cout << "STOP" << "\t";
-			break;
-		case ROTATE_180:
-			cout << "ROTATE_180" << "\t";
-			break;
-		case F_STOP:
-			cout << "F_STOP" << "\t";
-			break;
-		case FLAG:
-			cout << "FLAG" << "\t";
-			break;
-		}
-	}
+	//	switch (car.getRealPath(i)) {
+	//	case GO_F:
+	//		cout << "GO_F" << "\t";
+	//		break;
+	//	case GO_R:
+	//		cout << "GO_R" << "\t";
+	//		break;
 
-	cout << endl << endl;
+	//	case GO_L:
+	//		cout << "GO_L" << "\t";
+	//		break;
+	//	case STOP:
+	//		cout << "STOP" << "\t";
+	//		break;
+	//	case ROTATE_180:
+	//		cout << "ROTATE_180" << "\t";
+	//		break;
+	//	case F_STOP:
+	//		cout << "F_STOP" << "\t";
+	//		break;
+	//	case FLAG:
+	//		cout << "FLAG" << "\t";
+	//		break;
+	//	}
+	//}
 
-	for (int row = 0; row <= MAP_ROW; row++) {
-		for (int col = 0; col <= MAP_COL; col++) {
-			cout << map[row][col] << "\t";
-		}
-		cout << endl;
-	}
+	//cout << endl << endl;
+
+	//for (int row = 0; row <= MAP_ROW; row++) {
+	//	for (int col = 0; col <= MAP_COL; col++) {
+	//		cout << map[row][col] << "\t";
+	//	}
+	//	cout << endl;
+	//}
     return 0;
 }

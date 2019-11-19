@@ -2,6 +2,13 @@
 
 Map::Map() {
 
+	
+	//일 만들어 놓는 부분
+	storedWork.resize(STORENUM); //몇칸 저장할 지 할당
+	for (int i = 0; i < STORENUM; i++) {
+		makeStoredWork(i);
+	}
+
 	//배터리 초기화 부분
 	for (int i = 0; i < BATTERYNUM; i++) {
 		batLoc[i] = true;
@@ -47,6 +54,113 @@ Map::Map() {
 			}
 
 	}
+}
+
+void Map::makeStoredWork(int order) {
+	int yes[STUFFNUM] = {}; //물건이 있는 곳
+	int no[STUFFNUM] = {}; //물건이 없는 곳
+	int k1 = 0, k2 = 0; //물건이 있는 갯수, 없는 갯수
+
+	for (int i = 0; i < STUFFNUM; i++)
+	{
+		if (stuffLoc[i] == YES) {
+			yes[k1] = i;
+			k1++; //물건이 있는 것의 개수
+		}
+		else if (stuffLoc[i] == NO) {
+			no[k2] = i;
+			k2++; //물건이 없는 것의 갯수
+		}
+	}
+
+	//위치를 랜덤으로 넣어주는 부분
+
+	int stuffPickLoc, stuffLeaveLoc; //물건 드는 위치, 내리는 위치
+	int tmp; //임시 변수
+
+	tmp = rand() % k1; //물건이 있는 것보다 작은 수가 랜덤으로 생성
+	stuffPickLoc = yes[tmp];
+	stuffLoc[yes[tmp]] = CHOSEN; //선택된 것으로 정해줌
+	tmp = rand() % k2;
+	stuffLeaveLoc = no[tmp];
+	stuffLoc[no[tmp]] = CHOSEN; //선택된 것으로 정해줌
+
+	storedWork[order].first = stuffPickLoc;
+	storedWork[order].second = stuffLeaveLoc;
+}
+
+pair<int, int> Map::tranStuffLocTORealLoc(int order){
+
+	pair<int, int> realcoordin;
+	switch (order) {
+	case 0:
+		realcoordin.first = 2;
+		realcoordin.second = 2;
+		break;
+	case 1:
+		realcoordin.first = 3;
+		realcoordin.second = 2;
+		break;
+	case 2:
+		realcoordin.first = 6;
+		realcoordin.second = 2;
+		break;
+	case 3:
+		realcoordin.first = 7;
+		realcoordin.second = 2;
+		break;
+	case 4:
+		realcoordin.first = 2;
+		realcoordin.second = 3;
+		break;
+	case 5:
+		realcoordin.first = 3;
+		realcoordin.second = 3;
+		break;
+	case 6:
+		realcoordin.first = 6;
+		realcoordin.second = 3;
+		break;
+	case 7:
+		realcoordin.first = 7;
+		realcoordin.second = 3;
+		break;
+	case 8:
+		realcoordin.first = 2;
+		realcoordin.second = 4;
+		break;
+	case 9:
+		realcoordin.first = 3;
+		realcoordin.second = 4;
+		break;
+	case 10:
+		realcoordin.first = 6;
+		realcoordin.second = 4;
+		break;
+	case 11:
+		realcoordin.first = 7;
+		realcoordin.second = 4;
+		break;
+	case 12:
+		realcoordin.first = 2;
+		realcoordin.second = 5;
+		break;
+	case 13:
+		realcoordin.first = 3;
+		realcoordin.second = 5;
+		break;
+	case 14:
+		realcoordin.first = 6;
+		realcoordin.second = 5;
+		break;
+	case 15:
+		realcoordin.first = 7;
+		realcoordin.second = 5;
+		break;
+	
+	}
+
+	return realcoordin;
 }
 
 vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
@@ -224,21 +338,63 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 	return vector<vector<int>>();
 }
 
-vector<vector<int>> Map::makeroute(int x, int y, int status) {
+vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 
-	switch (status) {
-		case GOING_WORK :
+	vector<vector<int>> route, tmproute, swap;
 
-			break;
-		case GOING_CHARGE :
+	if (status == GOING_WORK) {
+		int shortidx = 9999;
+		int sCoordin, eCoordin;
 
-			break;
+		for (int i = 0; i < STORENUM; i++) {
+			sCoordin = storedWork[i].first;
 
-		default :
-			break;
+			pair<int, int> realSCoordin = tranStuffLocTORealLoc(sCoordin);
+
+			vector<vector<int>> tmproute = BFS(car_x, car_y, realSCoordin.first, realSCoordin.second);
+
+			int tmp = tmproute.size(); //차의 위치에서 일하러 가는 곳까지의 거리 계산
+
+									   //제일 짧은 거리를 찾아낸다.
+			if (tmp < shortidx) {
+				shortidx = i;
+				route.swap(tmproute);
+			}
+		}
+
+		for (int i = route.size() - 1; i >= 0; i--) {
+			swap.push_back(route[i]);
+		}
+
+		route.swap(swap);
+		swap.clear();
+
+
+		//물건 집는 곳에서 물건 놓는 곳까지의 일을 부여한다.
+		sCoordin = storedWork[shortidx].first;
+		eCoordin = storedWork[shortidx].second;
+
+		pair<int, int> realSCoordin = tranStuffLocTORealLoc(sCoordin);
+		pair<int, int> realECoordin = tranStuffLocTORealLoc(eCoordin);
+
+
+		tmproute = BFS(realSCoordin.first, realSCoordin.second, realECoordin.first, realECoordin.second);
+
+		for (int i = tmproute.size() - 1; i >= 0; i--) {
+			swap.push_back(tmproute[i]);
+		}
+
+		tmproute.swap(swap);
+
+		for (int i = 0; i < tmproute.size(); i++)
+			route.push_back(tmproute[i]);
+	}
+	else if (status == GOING_CHARGE) {
+
 	}
 
-	return vector<vector<int>>();
+
+	return route;
 }
 
 
