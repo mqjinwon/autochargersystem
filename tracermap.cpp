@@ -422,6 +422,11 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 		}
 	}
 
+	for (int i = route.size() - 1; i >= 0; i--) {
+		swap.push_back(route[i]);
+	}
+
+	route.swap(swap);
 
 	return route;
 }

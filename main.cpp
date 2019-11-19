@@ -301,7 +301,7 @@ int main(){
 
 
 
-	full_map = tmp.makeroute(rand() % 10, rand() % 6, GOING_WORK);
+	full_map = tmp.makeroute(3, 2, GOING_WORK);
 	car.putPath(full_map);
 
 	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
