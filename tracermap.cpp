@@ -343,8 +343,9 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 	vector<vector<int>> route, tmproute, swap;
 
 	if (status == GOING_WORK) {
-		int shortidx = 9999;
-		int sCoordin, eCoordin;
+		int shortestSize = 9999; //가장 짧은 거리를 저장
+		int shortidx; //가장 짧은 거리의 index를 저장
+		int sCoordin, eCoordin; //시작좌표 끝좌표를 저장
 
 		for (int i = 0; i < STORENUM; i++) {
 			sCoordin = storedWork[i].first;
@@ -356,7 +357,8 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 			int tmp = tmproute.size(); //차의 위치에서 일하러 가는 곳까지의 거리 계산
 
 									   //제일 짧은 거리를 찾아낸다.
-			if (tmp < shortidx) {
+			if (tmp < shortestSize) {
+				shortestSize = tmp;
 				shortidx = i;
 				route.swap(tmproute);
 			}
@@ -373,6 +375,13 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 		//물건 집는 곳에서 물건 놓는 곳까지의 일을 부여한다.
 		sCoordin = storedWork[shortidx].first;
 		eCoordin = storedWork[shortidx].second;
+
+		//물건을 들고 놓을 예정인 곳은 FLOATING 상태로 만든다.
+		stuffLoc[sCoordin] = FLOATING;
+		stuffLoc[eCoordin] = FLOATING;
+
+		//그 자리에 새로운 일 부여
+		makeStoredWork(shortidx);
 
 		pair<int, int> realSCoordin = tranStuffLocTORealLoc(sCoordin);
 		pair<int, int> realECoordin = tranStuffLocTORealLoc(eCoordin);
@@ -391,6 +400,26 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 	}
 	else if (status == GOING_CHARGE) {
 
+		if (batLoc[0] == true) {
+			route = BFS(car_x, car_y, 10, 2);
+
+			for (int i = route.size() - 1; i >= 0; i--) {
+				swap.push_back(route[i]);
+			}
+
+			route.swap(swap);
+			batLoc[0] == false;
+		}
+		else if (batLoc[1] == true) {
+			route = BFS(car_x, car_y, 10, 5);
+
+			for (int i = route.size() - 1; i >= 0; i--) {
+				swap.push_back(route[i]);
+			}
+
+			route.swap(swap);
+			batLoc[1] == false;
+		}
 	}
 
 

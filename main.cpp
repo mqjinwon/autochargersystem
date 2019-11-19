@@ -176,23 +176,27 @@ int main(){
 	Car car;
     Map tmp;
 
-	for (int i = 0; i < 16; i++) {
-		cout << tmp.stuffLoc[i] << "  " ;
+	for (int k = 0; k < 4; k++) {
+		for (int i = 0; i < 16; i++) {
+			cout << tmp.stuffLoc[i] << "  ";
+		}
+
+		cout << endl;
+
+		for (int i = 0; i < 4; i++) {
+			cout << "s : " << tmp.storedWork[i].first << ", e : " << tmp.storedWork[i].second << endl;;
+		}
+
+		cout << endl;
+
+		vector<vector<int>> hi = tmp.makeroute(rand()%10, rand()%6, GOING_WORK);
+
+		for (int i = 0; i < hi.size(); i++) {
+			cout << "x : " << hi[i][0] << ". y : " << hi[i][1] << endl;
+		}
 	}
 
-	cout << endl;
 
-	for (int i = 0; i < 4; i++) {
-		cout << "s : " << tmp.storedWork[i].first << ", e : " << tmp.storedWork[i].second << endl;;
-	}
-
-	cout << endl;
-
-	vector<vector<int>> hi = tmp.makeroute(0, 0, GOING_WORK);
-
-	for (int i = 0; i < hi.size(); i++) {
-		cout << "x : " << hi[i][0] << ". y : " << hi[i][1] << endl;
-	}
 	
     for(int row =0; row<=MAP_ROW; row++){
         for(int col=0; col<=MAP_COL; col++){
