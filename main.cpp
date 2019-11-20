@@ -299,7 +299,6 @@ int main(){
 		case GO_R:
 			cout << "GO_R" << "\t";
 			break;
-
 		case GO_L:
 			cout << "GO_L" << "\t";
 			break;
@@ -314,9 +313,6 @@ int main(){
 			break;
 		case LIFT_DOWN:
 			cout << "LIFT_DOWN" << "\t";
-			break;
-		case F_STOP:
-			cout << "F_STOP" << "\t";
 			break;
 		}
 	}
