@@ -1,6 +1,8 @@
 #pragma once
 #include "tracemap.h"
 
+#define CARNUM 4
+
 static int carID = 0; //차에 아이디 부여하는 변수
 
 //차 조종하기 위한 방향
@@ -10,11 +12,10 @@ typedef enum {
 	GO_B, // backward 뒤쪽으로 가는 것
 	GO_L, // left 왼쪽으로 가는 것
 	CHARGE_OUT, //충전하고 나갈 때,
-	STOP, //잠시 멈추게 하기
 	ROTATE_180, // 180도 회전 시키기
 	LIFT_UP,
 	LIFT_DOWN,
-	F_STOP, // 강제로 멈추게 하기
+	STOP // 멈춤
 }CAR_CONTROL_DIR;
 
 class Car {
@@ -32,7 +33,7 @@ public:
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
 
 	int routeIdx = 0; //route를 가르키는 index (0,1을 사용)
-	int route[2] = { F_STOP, F_STOP }; //두칸씩 저장하고 있는 경로
+	int route[2] = { STOP, STOP }; //두칸씩 저장하고 있는 경로
 
 	int absPointer = 0; //경로까지 진행상황, 절대 좌표에서의 포인터
 	int relPointer = 0; //경로까지 진행상황, 상대 좌표에서의 포인터
@@ -47,6 +48,17 @@ public:
 
 	Car(int x, int y) {
 		carPos = make_pair(x, y);
+	}
+
+	//relPointer증가 시키기 전에 사용해야한다!
+	void addAbsPointer() {
+
+		int carDir = realpath[relPointer];
+
+		if ((carDir == LIFT_UP) || (carDir == LIFT_DOWN) || (carDir == STOP)) {}
+		else {
+			absPointer++;
+		}
 	}
 
 	//차가 가야하는 절대 경로를 넣음 - 거꾸로 들어온 경로를 뒤집어 넣음으로써 정상적인 순서가 된다.
@@ -111,6 +123,7 @@ public:
 		return routeIdx;
 	}
 
+	//route 정보를 받아온다.
 	int* getRoute() {
 		return route;
 	}
@@ -118,4 +131,4 @@ public:
 };
 
 //차 네대 생성
-static Car robot[4];
+static Car robot[CARNUM];
