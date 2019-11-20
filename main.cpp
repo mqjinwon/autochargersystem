@@ -111,22 +111,6 @@ void processing(vector<Car> carLIst) {
 
 */
 
-		/////step 2. battery checking/////
-		
-		//step 2.1 각각의 배터리 상태를 갱신(uart 통신을 한다.)
-
-		//step 2.2 알고리즘에 따라 충전해야할 놈을 충전시킨다(우선순위부터 알려줌 ex) [1,0, 0 ,2])
-		//if(충전기가 부족할 경우) -- state =  CANTCHARGE 상태로 변경, charge_flag = true로 변경
-		//else -- state =  GOING_CHARGE 상태로 변경, charge_flag = true로 변경
-
-		/////step 3. working checking/////
-
-
-
-		/////step 4. route checking/////
-		//통신은 #id@를 보내게 된다.
-
-		//모든 차들에게 물어봐야하므로 이렇게 ㄱㄱ
 		for (int _id = 0; _id < carNum; _id++) {
 			data = "#id@";
 			serial.Write(data, 256);
@@ -213,16 +197,7 @@ int main(){
 	
 
 	
-	//vector<Car> linetracer;
-
-	//linetracer.push_back(Car(2, 2));
-	//linetracer.push_back(Car(3, 4));
-	//linetracer.push_back(Car(7, 5));
-	//linetracer.push_back(Car(10, 2));
-
-	//processing(linetracer);
-
-	//cout << carID << endl;
+	
 
 	vector<vector<int>> full_map;
 	Car car;
@@ -300,7 +275,6 @@ int main(){
     }
 
 
-
 	full_map = tmp.makeroute(3, 2, GOING_WORK);
 	car.putPath(full_map);
 
@@ -318,7 +292,7 @@ int main(){
 		if (i % 10 == 0 && i != 0)
 			cout << endl;
 
-		switch (car.getRealPath(i)) {
+		switch (car.realpath[i]) {
 		case GO_F:
 			cout << "GO_F" << "\t";
 			break;
