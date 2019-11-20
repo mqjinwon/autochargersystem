@@ -64,7 +64,6 @@ bool Car::putRealPath() {
 			else if ((now_x == 2) || (now_x == 3) || (now_x == 6) || (now_x == 7)) {
 				//처음에 나오게 되면 뒷꽁무니로 나오므로 처리를 해줘야한다.
 				realpath.push_back(ROTATE_180);
-				realpath.push_back(GO_F);
 				continue;
 			}
 		}
