@@ -17,7 +17,10 @@ using namespace std;
 
 #define PORTNUM "COM15"
 
+
 ///////////////////////////////////////////////////충전알고리즘에서 사용하는 부분
+#define BATADD 5
+#define BATSUB 0.3
 
 static float min_rule[4] = { 15.0, 15.0, 30,30 };   //부여받을 수 있는 일의 최대량보다는 커야 함.
 													//두 값의 차이도 위 값보다는 커야 함.
@@ -29,22 +32,33 @@ static float max_rule[4] = { 90.0, 90.0, 90,90 };
 
 
 //실제 일들을 처리할 부분
-void processing(vector<Car> carLIst) {
-
-	/////step 1. initilizing part/////
-	
-	int carNum = carLIst.size(); // 몇대의 차가 있는지 확인하기 위한 변수
-	vector<int> batterySize(carNum); // 배터리 값을 받기 위해서 사용하는 녀석
+void processing() {
 
 	Map map; // 전체 맵에 대한 것 선언
 
+	//라인트레이서 초기위치 및 배터리 잔량 설정
+	lineTracer[0].carPos.first = 2;
+	lineTracer[0].carPos.second = 4;
+	lineTracer[0].bat = 83.7;
+	lineTracer[1].carPos.first = 3;
+	lineTracer[1].carPos.second = 2;
+	lineTracer[1].bat = 76.5;
+	lineTracer[2].carPos.first = 7;
+	lineTracer[2].carPos.second = 3;
+	lineTracer[2].bat = 92.5;
+	lineTracer[3].carPos.first = 10;
+	lineTracer[3].carPos.second = 5;
+	lineTracer[3].bat = 57.7;
+
+
 	//serial port connection
-	const char *data;
+
+	const char *data; //데이터 전송시 사용할 변수
 
 	time_t start, end; //시간을 알려주는 변수
 
-	while (1) {
-		
+	/* 통신부분
+	while (1) {	
 		if (!serial.Open(PORTNUM, 115200)) {
 			printf("connect faliled\n");
 		}
@@ -53,11 +67,96 @@ void processing(vector<Car> carLIst) {
 			break;
 		}
 	}
+	*/
 
-
-	
 	//main process
 	while (1) {
+
+		int lineState = WORK_WAIT;
+		int posX, posY = 0;
+		vector<vector<int>> route;
+
+		//현재 저장하고 있는 일들을 알려주는 부분
+		for (int i = 0; i < 4; i++) {
+			cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
+		}
+		cout << endl;
+
+		for (int lineIdx = 0; lineIdx < CARNUM; lineIdx++) {
+
+			posX = lineTracer[lineIdx].carPos.first;
+			posY = lineTracer[lineIdx].carPos.second;
+
+			//정보들 print하는 부분
+			cout << "line" << lineIdx << "\t" << "posistion : " << posX << ", " << posY << "\t" << "battery : " << lineTracer[lineIdx].bat << endl;
+
+			//충전기 위치에 있다면(충전 중이라면)
+			if ((posX == 10 && posY == 2) || (posX == 10 && posY == 5)) {
+
+				//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
+				//linestate = 충전알고리즘()
+
+				if (lineState == GOING_WORK) {
+					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
+					lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+					//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
+
+				}
+				else if (lineState == GOING_CHARGE) {
+					//empty
+				}
+				if (lineTracer[lineIdx].bat + BATADD >= 100) {
+					lineTracer[lineIdx].bat = 100;
+				}
+				else {
+					lineTracer[lineIdx].bat += BATADD; //배터리 충전
+				}
+				
+			}
+			//일하는 중이라면
+			else {
+
+				//통신을 지금 하고 받는게 좋을지... 아니면 네대가 다 돌고나서 아래서 정보를 갱신하는게 좋은지... 잘모르겠슴!
+				//암튼 받았다고 치고...!
+
+				//첫 동작이 하나 끝났다면!
+				if (lineTracer[lineIdx].routeIdx == 1) {
+					lineTracer[lineIdx].addAbsPointer(); //절대좌표값을 증가시키기!
+					lineTracer[lineIdx].relPointer++; //상대좌표값을 증가시키기!, 마지막 경로였다면, 범위를 벗어나게 되겠지... 그게 벡터 사이즈와 같아진다! 그걸 아래서 이용
+
+					//마지막 경로까지 간거라면!
+					if (lineTracer[lineIdx].relPointer == lineTracer[lineIdx].realpath.size()) {
+						//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
+						//linestate = 충전알고리즘()
+					}
+				}
+				else {} //첫 동작이 아직 안끝났다면
+
+				if (lineTracer[lineIdx].bat - BATADD <= 0) {
+					lineTracer[lineIdx].bat = 0;
+				}
+				else {
+					lineTracer[lineIdx].bat -= BATSUB; //배터리 소모
+				}				
+			}
+
+		}
+
+		//차 4대에게 통신을 받아 정보를 갱신한다.
+		//for (int _id = 0; _id < CARNUM; _id++) {
+		//	data = "#id@";
+		//	serial.Write(data, 256);
+
+		//	start = time(NULL);
+
+		//	while (1) {
+
+		//		if (time(NULL) - start > 1000) {
+		//			cerr << "timeout!!" << endl;
+		//			break;
+		//		}
+		//	}
+		//}
 /*
 	bool crash_flag[4] = {0,0}
 	void 충돌방지 및 경로전송(i)
@@ -111,31 +210,12 @@ void processing(vector<Car> carLIst) {
 
 */
 
-		for (int _id = 0; _id < carNum; _id++) {
-			data = "#id@";
-			serial.Write(data, 256);
-
-			start = time(NULL);
-
-			while (1) {
-
-				if (time(NULL) - start > 1000) {
-					cerr << "timeout!!" << endl;
-					break;
-				}
-			}
-		}
-
 
 	}
 
 	serial.Close();
 
 }
-
-float battery[4] = { 83.7, 76.5, 92.5, 57.7 };
-
-
 
 int main(){
 
@@ -274,8 +354,10 @@ int main(){
         cout << endl;
     }
 
+	processing();
 
-	full_map = tmp.makeroute(3, 2, GOING_WORK);
+
+	full_map = tmp.makeroute(10, 5, GOING_WORK);
 	car.putPath(full_map);
 
 	int map[MAP_ROW+1][MAP_COL+1] = { 0, };
@@ -301,6 +383,9 @@ int main(){
 			break;
 		case GO_L:
 			cout << "GO_L" << "\t";
+			break;
+		case CHARGE_OUT:
+			cout << "CHARGE_OUT" << "\t";
 			break;
 		case STOP:
 			cout << "STOP" << "\t";

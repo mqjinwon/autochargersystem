@@ -12,7 +12,7 @@ typedef enum {
 	GO_B, // backward 뒤쪽으로 가는 것
 	GO_L, // left 왼쪽으로 가는 것
 	CHARGE_OUT, //충전하고 나갈 때,
-	ROTATE_180, // 180도 회전 시키기
+	ROTATE_180, // 180도 회전하고 나가는 것까지
 	LIFT_UP,
 	LIFT_DOWN,
 	STOP // 멈춤
@@ -50,7 +50,7 @@ public:
 		carPos = make_pair(x, y);
 	}
 
-	//relPointer증가 시키기 전에 사용해야한다!
+	//relPointer증가 시키기 전에 사용해야한다! -- 항상 증가하는 것이 아니기에 함수로 증가시키도록 만듬
 	void addAbsPointer() {
 
 		int carDir = realpath[relPointer];
@@ -63,6 +63,13 @@ public:
 
 	//차가 가야하는 절대 경로를 넣음 - 거꾸로 들어온 경로를 뒤집어 넣음으로써 정상적인 순서가 된다.
 	bool putPath(vector<vector<int>> path) {
+
+		//이전에 저장되었던 경로를 다 초기화시켜준다.
+		this->path.clear();
+		this->realpath.clear();
+		this->absPointer = 0;
+		this->relPointer = 0;
+
 		if (path.size() == 0)
 			return false;
 		else {
@@ -131,4 +138,4 @@ public:
 };
 
 //차 네대 생성
-static Car robot[CARNUM];
+static Car lineTracer[CARNUM];

@@ -55,7 +55,7 @@ bool Car::putRealPath() {
 		else if ((now_y == 2) || (now_y == 3) || (now_y == 4) || (now_y == 5)) {
 			//충전기쪽에 있을 때
 			if ((now_x == 10)) {
-				realpath.push_back(GO_F);
+				realpath.push_back(CHARGE_OUT);
 				mode = 0; // 정방향
 				continue;
 			}
