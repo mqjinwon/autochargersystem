@@ -62,6 +62,7 @@ public:
 	void makeStoredWork(int order); //저장할 일을 만드는 함수
 
 	pair<int, int> tranStuffLocTORealLoc(int order); //stuffLoc을 실제 좌표계로 변환 시켜주는 작업을 하는 함수
+	int tranRealLocTOStuffLoc(pair<int, int> axis);
 
 	int getPos(int x_col, int y_row) {
 		return pos[y_row][x_col];

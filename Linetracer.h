@@ -32,7 +32,7 @@ public:
 	vector<vector<int>> path; //가야하는 전체 경로를 표현(절대경로)
 	vector<int> realpath; // 차가 실제로 가는 경로(상대경로)
 
-	int routeIdx = 0; //route를 가르키는 index (0,1을 사용)
+	int routeIdx = 1; //route를 가르키는 index (0,1을 사용) -- 초기에 1이어야 일을 받을 수 있음
 	int route[2] = { STOP, STOP }; //두칸씩 저장하고 있는 경로
 
 	int absPointer = 0; //경로까지 진행상황, 절대 좌표에서의 포인터
@@ -55,9 +55,11 @@ public:
 
 		int carDir = realpath[relPointer];
 
-		if ((carDir == LIFT_UP) || (carDir == LIFT_DOWN) || (carDir == STOP)) {}
+		if ((carDir == LIFT_UP) || (carDir == LIFT_DOWN) || (carDir == STOP) || (carDir == CHARGE_OUT)) {}
 		else {
 			absPointer++;
+			carPos.first = path[absPointer][0];
+			carPos.second =path[absPointer][1];
 		}
 	}
 

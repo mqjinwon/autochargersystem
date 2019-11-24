@@ -29,7 +29,40 @@ static float min_rule[4] = { 15.0, 15.0, 30,30 };   //부여받을 수 있는 일의 최대
 													//static float max_rule[N] = { 60.0, 70.0, 80,90 };
 static float max_rule[4] = { 90.0, 90.0, 90,90 };
 
+bool crash_flag[4] = { 0,0 };
 
+void putRoot(int caridx) {
+
+	//충돌하려 한다면
+	if (false/*충돌하려고한다면*/) {
+		//현재 경로 index 저장
+		crash_flag[caridx] = 1;
+	}
+	else if (false/*충돌하려는 상황이 끝났다면*/) {
+		//인덱스 복구
+		crash_flag[caridx] = 0;
+	}
+	else {
+
+	}
+}
+//bool crash_flag[4] = { 0,0 }
+//void 충돌방지 및 경로전송(i)
+//{
+//	if (i가 충돌하려함)
+//		현재 경로 index 저장
+//		crash_flag[i] = 1;
+//	stop의 경로 2개를 전송
+//	else if (crash_flag[i] == 1)
+//		index 복구
+//		crash_flag[i] = 0;
+//	경로 2개 전송
+//	else
+//	{
+//		index 유지
+//	}
+//	경로 2개 전송
+//}
 
 //실제 일들을 처리할 부분
 void processing() {
@@ -46,8 +79,8 @@ void processing() {
 	lineTracer[2].carPos.first = 7;
 	lineTracer[2].carPos.second = 3;
 	lineTracer[2].bat = 92.5;
-	lineTracer[3].carPos.first = 10;
-	lineTracer[3].carPos.second = 5;
+	lineTracer[3].carPos.first = 7;//10;
+	lineTracer[3].carPos.second = 2;//5;
 	lineTracer[3].bat = 57.7;
 
 
@@ -87,14 +120,30 @@ void processing() {
 			posX = lineTracer[lineIdx].carPos.first;
 			posY = lineTracer[lineIdx].carPos.second;
 
+			//물건들 위치 갱신하는 부분
+			if (!(lineTracer[lineIdx].realpath.empty())) {
+				if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_DOWN) {
+					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));
+					//pair<int, int> tranStuffLocTORealLoc(int order);
+					map.stuffLoc[axis] = YES;
+				}
+				else if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_UP) {
+					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));
+					//pair<int, int> tranStuffLocTORealLoc(int order);
+					map.stuffLoc[axis] = NO;
+				}
+			}
+
+
 			//정보들 print하는 부분
-			cout << "line" << lineIdx << "\t" << "posistion : " << posX << ", " << posY << "\t" << "battery : " << lineTracer[lineIdx].bat << endl;
+			cout << "line" << lineIdx << "\t" << "absP : " << lineTracer[lineIdx].absPointer << ", absR : " << lineTracer[lineIdx].relPointer <<", posistion : " << posX << ", " << posY << "\t" << "battery : " << lineTracer[lineIdx].bat << endl;
 
 			//충전기 위치에 있다면(충전 중이라면)
 			if ((posX == 10 && posY == 2) || (posX == 10 && posY == 5)) {
 
 				//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 				//linestate = 충전알고리즘()
+				lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
 
 				if (lineState == GOING_WORK) {
 					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
@@ -118,17 +167,22 @@ void processing() {
 
 				//통신을 지금 하고 받는게 좋을지... 아니면 네대가 다 돌고나서 아래서 정보를 갱신하는게 좋은지... 잘모르겠슴!
 				//암튼 받았다고 치고...!
+				lineTracer[lineIdx].routeIdx = 1;//------------------------------------------------------실험용으로 우선 넣어놓음!
 
 				//첫 동작이 하나 끝났다면!
 				if (lineTracer[lineIdx].routeIdx == 1) {
-					lineTracer[lineIdx].addAbsPointer(); //절대좌표값을 증가시키기!
-					lineTracer[lineIdx].relPointer++; //상대좌표값을 증가시키기!, 마지막 경로였다면, 범위를 벗어나게 되겠지... 그게 벡터 사이즈와 같아진다! 그걸 아래서 이용
-
 					//마지막 경로까지 간거라면!
 					if (lineTracer[lineIdx].relPointer == lineTracer[lineIdx].realpath.size()) {
 						//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 						//linestate = 충전알고리즘()
+						lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
+						route = map.makeroute(posX, posY, lineState); //일할 경로 생성
+						lineTracer[lineIdx].putPath(route);//일할 경로 삽입
 					}
+
+					lineTracer[lineIdx].addAbsPointer(); //절대좌표값을 증가시키기!
+					lineTracer[lineIdx].relPointer++; //상대좌표값을 증가시키기!
+
 				}
 				else {} //첫 동작이 아직 안끝났다면
 

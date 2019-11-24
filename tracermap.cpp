@@ -163,6 +163,57 @@ pair<int, int> Map::tranStuffLocTORealLoc(int order){
 	return realcoordin;
 }
 
+int Map::tranRealLocTOStuffLoc(pair<int, int> axis) {
+	if (axis == make_pair(2, 2)) {
+		return 0;
+	}
+	else if (axis == make_pair(3, 2)) {
+		return 1;
+	}
+	else if (axis == make_pair(6, 2)) {
+		return 2;
+	}
+	else if (axis == make_pair(7, 2)) {
+		return 3;
+	}
+	else if (axis == make_pair(2, 3)) {
+		return 4;
+	}
+	else if (axis == make_pair(3, 3)) {
+		return 5;
+	}
+	else if (axis == make_pair(6, 3)) {
+		return 6;
+	}
+	else if (axis == make_pair(7, 3)) {
+		return 7;
+	}
+	else if (axis == make_pair(2, 4)) {
+		return 8;
+	}
+	else if (axis == make_pair(3, 4)) {
+		return 9;
+	}
+	else if (axis == make_pair(6, 4)) {
+		return 10;
+	}
+	else if (axis == make_pair(7, 4)) {
+		return 11;
+	}
+	else if (axis == make_pair(2, 5)) {
+		return 12;
+	}
+	else if (axis == make_pair(3, 5)) {
+		return 13;
+	}
+	else if (axis == make_pair(6, 5)) {
+		return 14;
+	}
+	else if (axis == make_pair(7, 5)) {
+		return 15;
+	}
+}
+
 vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 {
 	cout << "BFS route!!!!" << endl;
