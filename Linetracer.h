@@ -55,7 +55,7 @@ public:
 
 		int carDir = realpath[relPointer];
 
-		if ((carDir == LIFT_UP) || (carDir == LIFT_DOWN) || (carDir == STOP) || (carDir == CHARGE_OUT)) {}
+		if ((carDir == LIFT_DOWN) || (carDir == STOP) || (carDir == CHARGE_OUT)) {}
 		else {
 			absPointer++;
 			carPos.first = path[absPointer][0];

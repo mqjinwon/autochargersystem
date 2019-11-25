@@ -103,17 +103,19 @@ void processing() {
 	*/
 
 	//main process
+
+	//현재 저장하고 있는 일들을 알려주는 부분
+	cout << "First allowed work!" << endl;
+	for (int i = 0; i < 4; i++) {
+		cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
+	}
+	cout << endl;
+
 	while (1) {
 
 		int lineState = WORK_WAIT;
 		int posX, posY = 0;
 		vector<vector<int>> route;
-
-		//현재 저장하고 있는 일들을 알려주는 부분
-		for (int i = 0; i < 4; i++) {
-			cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
-		}
-		cout << endl;
 
 		for (int lineIdx = 0; lineIdx < CARNUM; lineIdx++) {
 
@@ -123,13 +125,11 @@ void processing() {
 			//물건들 위치 갱신하는 부분
 			if (!(lineTracer[lineIdx].realpath.empty())) {
 				if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_DOWN) {
-					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));
-					//pair<int, int> tranStuffLocTORealLoc(int order);
+					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY)); //실제좌표에서 물건 표시하는 숫자로 변환
 					map.stuffLoc[axis] = YES;
 				}
 				else if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_UP) {
-					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));
-					//pair<int, int> tranStuffLocTORealLoc(int order);
+					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));//실제좌표에서 물건 표시하는 숫자로 변환
 					map.stuffLoc[axis] = NO;
 				}
 			}
@@ -148,6 +148,17 @@ void processing() {
 				if (lineState == GOING_WORK) {
 					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
 					lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+
+					//현재 저장하고 있는 일들을 알려주는 부분
+					for (int i = 0; i < 4; i++) {
+						cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
+					}
+					cout << endl;
+
+					//경로 확인용--------------------------------------------------------------------실험용으로 우선 넣어놓음
+					//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
+					//	lineTracer[lineIdx].getPath(i)[1];
+					//}
 					//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
 
 				}
@@ -169,15 +180,50 @@ void processing() {
 				//암튼 받았다고 치고...!
 				lineTracer[lineIdx].routeIdx = 1;//------------------------------------------------------실험용으로 우선 넣어놓음!
 
+
+				//초기에 경로를 받는 상태라면
+				if (lineTracer[lineIdx].realpath.size() == 0) {
+					//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
+					//linestate = 충전알고리즘()
+					lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
+					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
+					lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+
+					//현재 저장하고 있는 일들을 알려주는 부분
+					for (int i = 0; i < 4; i++) {
+						cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
+					}
+					cout << endl;
+
+					//경로 확인용--------------------------------------------------------------------실험용으로 우선 넣어놓음
+					//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
+					//	lineTracer[lineIdx].getPath(i)[1];
+					//}
+					//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
+				}
+
 				//첫 동작이 하나 끝났다면!
 				if (lineTracer[lineIdx].routeIdx == 1) {
+					
 					//마지막 경로까지 간거라면!
-					if (lineTracer[lineIdx].relPointer == lineTracer[lineIdx].realpath.size()) {
+					if (lineTracer[lineIdx].relPointer == (lineTracer[lineIdx].realpath.size() - 1) && lineTracer[lineIdx].realpath.size() > 0) {
 						//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 						//linestate = 충전알고리즘()
 						lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
 						route = map.makeroute(posX, posY, lineState); //일할 경로 생성
 						lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+
+						//현재 저장하고 있는 일들을 알려주는 부분
+						for (int i = 0; i < 4; i++) {
+							cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
+						}
+						cout << endl;
+
+						//경로 확인용--------------------------------------------------------------------실험용으로 우선 넣어놓음
+						//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
+						//	lineTracer[lineIdx].getPath(i)[1];
+						//}
+						//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
 					}
 
 					lineTracer[lineIdx].addAbsPointer(); //절대좌표값을 증가시키기!
@@ -193,9 +239,8 @@ void processing() {
 					lineTracer[lineIdx].bat -= BATSUB; //배터리 소모
 				}				
 			}
-
 		}
-
+		cout << endl;
 		//차 4대에게 통신을 받아 정보를 갱신한다.
 		//for (int _id = 0; _id < CARNUM; _id++) {
 		//	data = "#id@";
