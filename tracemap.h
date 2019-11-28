@@ -83,6 +83,36 @@ public:
 			}
 	}
 
+	//숫자로 표현된 경로를 넣으면 실제로 무슨 방향으로 가는지 알려줌
+	void printRealpath(int realpath) {
+		switch (realpath) {
+		case 0:
+			cout << "GO_F" << "\t";
+			break;
+		case 1:
+			cout << "GO_R" << "\t";
+			break;
+		case 3:
+			cout << "GO_L" << "\t";
+			break;
+		case 4:
+			cout << "CHARGE_OUT" << "\t";
+			break;
+		case 5:
+			cout << "ROTATE_180" << "\t";
+			break;
+		case 6:
+			cout << "LIFT_UP" << "\t";
+			break;
+		case 7:
+			cout << "LIFT_DOWN" << "\t";
+			break;
+		case 8:
+			cout << "STOP" << "\t";
+			break;
+		}
+	}
+
 	//좌표값 반환
 	vector<vector<int>> BFS(int s_x, int s_y, int e_x, int e_y);
 	

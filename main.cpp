@@ -1,6 +1,4 @@
 #include "Comm.h"
-static CComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
-
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -21,6 +19,11 @@ using namespace std;
 ///////////////////////////////////////////////////충전알고리즘에서 사용하는 부분
 #define BATADD 5
 #define BATSUB 0.3
+#define CARNUM 4
+
+static CComm serial; //시리얼 통신을 위한 변수 -- 모든 소스에서 사용되므로 전역변수로 선언
+Map map; // 전체 맵에 대한 것 선언
+static Car lineTracer[CARNUM]; //차 네대 생성
 
 static float min_rule[4] = { 15.0, 15.0, 30,30 };   //부여받을 수 있는 일의 최대량보다는 커야 함.
 													//두 값의 차이도 위 값보다는 커야 함.
@@ -29,22 +32,50 @@ static float min_rule[4] = { 15.0, 15.0, 30,30 };   //부여받을 수 있는 일의 최대
 													//static float max_rule[N] = { 60.0, 70.0, 80,90 };
 static float max_rule[4] = { 90.0, 90.0, 90,90 };
 
-bool crash_flag[4] = { 0,0 };
+bool crash_flag[4] = { 0, };
 
 void putRoot(int caridx) {
 
-	//충돌하려 한다면
-	if (false/*충돌하려고한다면*/) {
-		//현재 경로 index 저장
-		crash_flag[caridx] = 1;
-	}
-	else if (false/*충돌하려는 상황이 끝났다면*/) {
-		//인덱스 복구
-		crash_flag[caridx] = 0;
+
+	if (lineTracer[caridx].relPointer + 1 == lineTracer[caridx].realpathLength()) {
+		lineTracer[caridx].route[0] = lineTracer[caridx].realpath[lineTracer[caridx].relPointer];
+		lineTracer[caridx].route[1] = STOP;
+		
+		cout << "route! : " << lineTracer[caridx].route[0] << ", " << lineTracer[caridx].route[1] << endl;
+
+		return;
 	}
 	else {
 
+		if (lineTracer[caridx].relPointer + 1 != lineTracer[caridx].realpathLength()) {
+			int myNextX = lineTracer[caridx].path[lineTracer[caridx].absPointer+1][0];
+			int myNextY = lineTracer[caridx].path[lineTracer[caridx].absPointer+1][1];
+
+			//충돌하려 한다면
+			for (int i = 0; i < 4; i++) {
+				if (i != caridx) {
+					if (lineTracer[i].carPos.first == myNextX && lineTracer[i].carPos.second == myNextY) {
+
+						//정지해랏!!!
+						lineTracer[caridx].route[0] = STOP;
+						lineTracer[caridx].route[1] = STOP;
+						cout << "==============================================================\n===============================STOP===========================\n==============================================================\n";
+						cout << "route! : "; map.printRealpath(lineTracer[caridx].route[0]); map.printRealpath(lineTracer[caridx].route[1]); cout << endl;
+						return;
+					}
+				}
+			}
+		}
+
+		lineTracer[caridx].route[0] = lineTracer[caridx].realpath[lineTracer[caridx].relPointer];
+		lineTracer[caridx].route[1] = lineTracer[caridx].realpath[lineTracer[caridx].relPointer + 1];
 	}
+	
+	lineTracer[caridx].addAbsPointer(); //절대 좌표값을 증가시키기!
+	lineTracer[caridx].relPointer++; //상대 좌표값을 증가시키기!
+
+	cout << "route! : "; map.printRealpath(lineTracer[caridx].route[0]); map.printRealpath(lineTracer[caridx].route[1]); cout << endl;
+
 }
 //bool crash_flag[4] = { 0,0 }
 //void 충돌방지 및 경로전송(i)
@@ -67,7 +98,7 @@ void putRoot(int caridx) {
 //실제 일들을 처리할 부분
 void processing() {
 
-	Map map; // 전체 맵에 대한 것 선언
+
 
 	//라인트레이서 초기위치 및 배터리 잔량 설정
 	lineTracer[0].carPos.first = 2;
@@ -79,8 +110,8 @@ void processing() {
 	lineTracer[2].carPos.first = 7;
 	lineTracer[2].carPos.second = 3;
 	lineTracer[2].bat = 92.5;
-	lineTracer[3].carPos.first = 7;//10;
-	lineTracer[3].carPos.second = 2;//5;
+	lineTracer[3].carPos.first = 10;
+	lineTracer[3].carPos.second = 5;
 	lineTracer[3].bat = 57.7;
 
 
@@ -109,13 +140,13 @@ void processing() {
 	for (int i = 0; i < 4; i++) {
 		cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
 	}
-	cout << endl;
+	cout << endl << "===================================================================================" << endl << endl;
 
 	while (1) {
 
 		int lineState = WORK_WAIT;
 		int posX, posY = 0;
-		vector<vector<int>> route;
+		vector<vector<int>> tmproute;
 
 		for (int lineIdx = 0; lineIdx < CARNUM; lineIdx++) {
 
@@ -145,9 +176,13 @@ void processing() {
 				//linestate = 충전알고리즘()
 				lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
 
-				if (lineState == GOING_WORK) {
-					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
-					lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+
+				if (lineTracer[lineIdx].relPointer > 0) {
+					putRoot(lineIdx);
+				}
+				else if (lineState == GOING_WORK) {
+					tmproute = map.makeroute(posX, posY, lineState); //일할 경로 생성
+					lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 					//현재 저장하고 있는 일들을 알려주는 부분
 					for (int i = 0; i < 4; i++) {
@@ -159,12 +194,10 @@ void processing() {
 					//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
 					//	lineTracer[lineIdx].getPath(i)[1];
 					//}
-					//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
+					//충돌방지 알고리즘 삽입
+					putRoot(lineIdx);
+				}
 
-				}
-				else if (lineState == GOING_CHARGE) {
-					//empty
-				}
 				if (lineTracer[lineIdx].bat + BATADD >= 100) {
 					lineTracer[lineIdx].bat = 100;
 				}
@@ -186,8 +219,8 @@ void processing() {
 					//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 					//linestate = 충전알고리즘()
 					lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
-					route = map.makeroute(posX, posY, lineState); //일할 경로 생성
-					lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+					tmproute = map.makeroute(posX, posY, lineState); //일할 경로 생성
+					lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 					//현재 저장하고 있는 일들을 알려주는 부분
 					for (int i = 0; i < 4; i++) {
@@ -199,19 +232,19 @@ void processing() {
 					//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
 					//	lineTracer[lineIdx].getPath(i)[1];
 					//}
-					//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
+					//충돌방지 알고리즘 삽입
+					putRoot(lineIdx);
 				}
-
 				//첫 동작이 하나 끝났다면!
-				if (lineTracer[lineIdx].routeIdx == 1) {
+				else if (lineTracer[lineIdx].routeIdx == 1) {
 					
 					//마지막 경로까지 간거라면!
-					if (lineTracer[lineIdx].relPointer == (lineTracer[lineIdx].realpath.size() - 1) && lineTracer[lineIdx].realpath.size() > 0) {
+					if (lineTracer[lineIdx].relPointer == (lineTracer[lineIdx].realpath.size()-1)) {
 						//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 						//linestate = 충전알고리즘()
 						lineState = GOING_WORK;//--------------------------------------------------------실험용으로 우선 넣어놓음
-						route = map.makeroute(posX, posY, lineState); //일할 경로 생성
-						lineTracer[lineIdx].putPath(route);//일할 경로 삽입
+						tmproute = map.makeroute(posX, posY, lineState); //일할 경로 생성
+						lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 						//현재 저장하고 있는 일들을 알려주는 부분
 						for (int i = 0; i < 4; i++) {
@@ -223,11 +256,11 @@ void processing() {
 						//for (int i = 0; i < lineTracer[lineIdx].pathLength(); i++) {
 						//	lineTracer[lineIdx].getPath(i)[1];
 						//}
-						//충돌방지 알고리즘 삽입---------------------------------------------------------------아직 안함
+						
 					}
 
-					lineTracer[lineIdx].addAbsPointer(); //절대좌표값을 증가시키기!
-					lineTracer[lineIdx].relPointer++; //상대좌표값을 증가시키기!
+					//충돌방지 알고리즘 삽입
+					putRoot(lineIdx);
 
 				}
 				else {} //첫 동작이 아직 안끝났다면

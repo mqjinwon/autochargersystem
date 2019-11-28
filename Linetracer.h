@@ -1,8 +1,6 @@
 #pragma once
 #include "tracemap.h"
 
-#define CARNUM 4
-
 static int carID = 0; //차에 아이디 부여하는 변수
 
 //차 조종하기 위한 방향
@@ -55,7 +53,7 @@ public:
 
 		int carDir = realpath[relPointer];
 
-		if ((carDir == LIFT_DOWN) || (carDir == STOP) || (carDir == CHARGE_OUT)) {}
+		if ((carDir == LIFT_DOWN) || (carDir == STOP)) {}
 		else {
 			absPointer++;
 			carPos.first = path[absPointer][0];
@@ -139,5 +137,4 @@ public:
 
 };
 
-//차 네대 생성
-static Car lineTracer[CARNUM];
+
