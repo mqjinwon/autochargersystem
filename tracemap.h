@@ -115,6 +115,9 @@ public:
 
 	//좌표값 반환
 	vector<vector<int>> BFS(int s_x, int s_y, int e_x, int e_y);
+
+	//일중에서 가장 짧은 거리를 찾아서 반환해줌
+	int findShortroute(int x, int y);
 	
 	//업무를 만들어서 줌, 로봇이 일이 끝난 후 있을 위치, 상태(일하러 가야하는지, 충전하러 가야하는지)
 	vector<vector<int>> makeroute(int x, int y, int status);

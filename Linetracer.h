@@ -37,8 +37,10 @@ public:
 	int relPointer = 0; //경로까지 진행상황, 상대 좌표에서의 포인터
 
 	float bat; // 배터리 잔량 표시 변수
-	float remainWorkBat; //현재 하고있는 일의 거리에 해당하는 배터리가 저장
-	float remainChrgBat; //충전소까지 가는 거리에 해당하는 배터리가 저장
+	float remain_bat;	//현재 하고있는 일 한 후의 배터리
+	float work_bat; //현재 하고있는 일의 거리에 해당하는 배터리가 저장		//bat- work_bat = remain_bat
+	//float remainChrgBat; //충전소까지 가는 거리에 해당하는 배터리가 저장
+
 
 	Car() {
 		//chargeFlag = false;
@@ -61,6 +63,16 @@ public:
 		}
 	}
 
+	//배터리순 AGV 정렬
+	bool comp_by_bat(static Car& a, static Car& b) {			//배터리순으로 정렬하기 위한 함수
+		return a.bat < b.bat;
+	}
+
+	//id순 AGV 정렬
+	bool comp_by_id(static Car& a, static Car& b) {				//id순으로 정렬하기 위한 함수
+		return a.id < b.id;
+	}
+
 	//차가 가야하는 절대 경로를 넣음 - 거꾸로 들어온 경로를 뒤집어 넣음으로써 정상적인 순서가 된다.
 	bool putPath(vector<vector<int>> path) {
 
@@ -69,6 +81,9 @@ public:
 		this->realpath.clear();
 		this->absPointer = 0;
 		this->relPointer = 0;
+
+		this->work_bat = path.size() - 1;
+		this->remain_bat = this->bat - this->work_bat;
 
 		if (path.size() == 0)
 			return false;

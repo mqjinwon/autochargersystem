@@ -47,6 +47,23 @@ Map::Map() {
 		pos[6][2] = L; pos[6][3] = L; pos[6][6] = L; pos[6][7] = L;
 
 
+		//중간 부분 끊기
+		pos[2][4] = DL;
+		pos[3][4] = DL;
+		pos[4][4] = DL;
+		pos[5][4] = DL;
+		pos[2][5] = UR;
+		pos[3][5] = UR;
+		pos[4][5] = UR;
+		pos[5][5] = UR;
+
+		//충전소 부분 끊기
+		pos[2][8] = DL;
+		pos[5][8] = DL;
+		pos[2][9] = UR;
+		pos[5][9] = UR;
+		pos[7][9] = U;
+
 		//ischeck TRUE로 초기화
 		for (int row = 0; row <= MAP_ROW; row++)
 			for (int col = 0; col <= MAP_COL; col++) {
@@ -389,6 +406,28 @@ vector<vector<int>> Map::BFS(int s_x, int s_y, int e_x, int e_y)
 	return vector<vector<int>>();
 }
 
+int Map::findShortroute(int x, int y) {
+	int shortSize = 9999; //가장 짧은 거리를 저장
+	int sCoordin, eCoordin; //시작좌표 끝좌표를 저장
+
+	for (int i = 0; i < STORENUM; i++) {
+		sCoordin = storedWork[i].first;
+
+		pair<int, int> realSCoordin = tranStuffLocTORealLoc(sCoordin);
+
+		vector<vector<int>> tmproute = BFS(x, y, realSCoordin.first, realSCoordin.second);
+
+		int tmp = tmproute.size(); //차의 위치에서 일하러 가는 곳까지의 거리 계산
+
+								   //제일 짧은 거리를 찾아낸다.
+		if (tmp < shortSize) {
+			shortSize = tmp;
+		}
+	}
+
+	return shortSize;
+}
+
 vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 
 	vector<vector<int>> route, tmproute, swap;
@@ -459,7 +498,7 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 			}
 
 			route.swap(swap);
-			batLoc[0] == false;
+			batLoc[0] = false;
 		}
 		else if (batLoc[1] == true) {
 			route = BFS(car_x, car_y, 10, 5);
@@ -469,7 +508,7 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 			}
 
 			route.swap(swap);
-			batLoc[1] == false;
+			batLoc[1] = false;
 		}
 	}
 
