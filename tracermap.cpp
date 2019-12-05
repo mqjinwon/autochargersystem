@@ -48,21 +48,37 @@ Map::Map() {
 
 
 		//중간 부분 끊기
-		pos[2][4] = DL;
+		pos[2][4] = RDL;
 		pos[3][4] = DL;
-		pos[4][4] = DL;
+		pos[4][4] = RDL;
 		pos[5][4] = DL;
 		pos[2][5] = UR;
-		pos[3][5] = UR;
+		pos[3][5] = LUR;
 		pos[4][5] = UR;
-		pos[5][5] = UR;
+		pos[5][5] = LUR;
 
 		//충전소 부분 끊기
 		pos[2][8] = DL;
 		pos[5][8] = DL;
-		pos[2][9] = UR;
-		pos[5][9] = UR;
+		pos[2][9] = LUR;
+		pos[5][9] = LUR;
 		pos[7][9] = U;
+
+		pos[3][9] = U;
+		pos[4][9] = U;
+		
+		pos[2][0] = D;
+		pos[4][0] = D;
+		pos[3][1] = UR;
+		pos[5][1] = UR;
+
+
+		pos[1][0] = D;
+		pos[1][9] = U;
+		pos[6][0] = D;
+		pos[6][9] = U;
+
+
 
 		//ischeck TRUE로 초기화
 		for (int row = 0; row <= MAP_ROW; row++)

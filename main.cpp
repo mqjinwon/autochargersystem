@@ -16,7 +16,7 @@ using namespace std;
 #define PORTNUM "COM15"
 
 ///////////////////////////////////////////////////충전알고리즘에서 사용하는 부분
-#define BATADD 10//3.3
+#define BATADD 3.3
 #define BATSUB 1
 #define CARNUM 4
 
@@ -28,12 +28,12 @@ static Car lineTracer[CARNUM]; //차 네대 생성
 void putRoot(int caridx) {
 
 
-	if (lineTracer[caridx].relPointer + 1 == lineTracer[caridx].realpathLength()) {
+	if (lineTracer[caridx].relPointer+2 == lineTracer[caridx].realpathLength()) {
 		lineTracer[caridx].route[0] = lineTracer[caridx].realpath[lineTracer[caridx].relPointer];
 		lineTracer[caridx].route[1] = STOP;
 		
 		cout << "route! : " << lineTracer[caridx].route[0] << ", " << lineTracer[caridx].route[1] << endl;
-
+		cout << "final~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 		return;
 	}
 	else {
@@ -72,10 +72,10 @@ void putRoot(int caridx) {
 
 int bat_order = 0;
 int temp_return = 0;
-#define B_minus 20	//일의 최대량 최소량 평균의 70% 수치임.	14
-#define C_minus 19	//충전소로 복귀하기까지의 최대수치임.  16
+#define B_minus 14	//일의 최대량 최소량 평균의 70% 수치임.	20
+#define C_minus 16	//충전소로 복귀하기까지의 최대수치임. 19
 static float min_rule[CARNUM] = { C_minus + B_minus, C_minus + B_minus, C_minus + 2 * B_minus ,C_minus + 2 * B_minus };
-static float max_rule[CARNUM] = { 90.0, 90.0, 90,90 };
+static float max_rule[CARNUM] = { 90.0, 90.0, 90.0 ,90.0 };
 static int working_robot_num = CARNUM;
 int getout = 0;
 
@@ -108,14 +108,20 @@ int charge_decision(int idx) {
 		}
 		else
 		{
+			//충전소에 누군가 있다면 나가라고 해라
 			if ((map.batLoc[0] == false) && (map.batLoc[1] == false)) {
-				getout += 1;
+				if ((posX == 10 && posY == 2) && (posX == 10 && posY == 5)) {
+					getout += 1;
+				}
+				return WORK_WAIT;
 			}
+			else {
 
-			cout << idx << "th AGV is going to charge======================================================================" << endl;
-			temp_return = GOING_CHARGE;   //아니라면 충전소로 가라.
-										  //lineTracer[idx].remainChrgBat = C_minus;   //충전소까지의 거리에 해당하는 배터리량
-			return temp_return;
+				cout << idx << "th AGV is going to charge======================================================================" << endl;
+				temp_return = GOING_CHARGE;   //아니라면 충전소로 가라.
+											  //lineTracer[idx].remainChrgBat = C_minus;   //충전소까지의 거리에 해당하는 배터리량
+				return temp_return;
+			}
 		}
 	}
 
@@ -196,7 +202,7 @@ void processing() {
 
 	//현재 저장하고 있는 일들을 알려주는 부분
 	cout << "First allowed work!" << endl;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 3; i++) {
 		cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
 	}
 	cout << endl << "===================================================================================" << endl << endl;
@@ -216,10 +222,13 @@ void processing() {
 			if (!(lineTracer[lineIdx].realpath.empty())) {
 				if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_DOWN) {
 					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY)); //실제좌표에서 물건 표시하는 숫자로 변환
+
+					cout << axis <<": " << lineTracer[lineIdx].route[0] << ", " << lineTracer[lineIdx].route[1] <<"YESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYESYES" << endl;
 					map.stuffLoc[axis] = YES;
 				}
-				else if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_UP) {
+				if (lineTracer[lineIdx].realpath[lineTracer[lineIdx].relPointer] == LIFT_UP) {
 					int axis = map.tranRealLocTOStuffLoc(make_pair(posX, posY));//실제좌표에서 물건 표시하는 숫자로 변환
+					cout<< axis << ": " << lineTracer[lineIdx].route[0] << ", " << lineTracer[lineIdx].route[1] << "NONONONONONONONONONONONONONONONONONONONONONONONONONONONONONONONONO" << endl;
 					map.stuffLoc[axis] = NO;
 				}
 			}
@@ -227,6 +236,30 @@ void processing() {
 
 			//정보들 print하는 부분
 			cout << "line" << lineIdx << "\t" << "absP : " << lineTracer[lineIdx].absPointer << ", absR : " << lineTracer[lineIdx].relPointer <<", posistion : " << posX << ", " << posY << "\t" << "B : " << lineTracer[lineIdx].bat << ", RB : " << lineTracer[lineIdx].remain_bat << endl;
+			
+			cout << "stuffLoc" << endl;
+			for (int i = 0; i < 16; i++) {
+
+				switch (map.stuffLoc[i]) {
+				case YES: 
+					cout <<"YES\t";
+					break;
+				case FLOATING:
+					cout << "FLOATING\t";
+					break;
+				case NO:
+					cout << "NO\t";
+					break;
+				case CHOSEN:
+					cout << "CHOSEN\t";
+					break;
+
+				}
+				if (i % 4 == 3)
+					cout << endl;
+			}
+
+			cout << "batLoc" << map.batLoc[0] << ", "  << map.batLoc[1] << endl;			
 
 			//충전기 위치에 있다면(충전 중이라면)
 			if ((posX == 10 && posY == 2) || (posX == 10 && posY == 5)) {
@@ -239,17 +272,17 @@ void processing() {
 				//if (lineTracer[lineIdx].relPointer > 0) {
 				//	putRoot(lineIdx);
 				//}
-				if (lineState == GOING_WORK) {
-					if((posX == 10 && posY == 2))
-						map.batLoc[0] = true;
-					else if((posX == 10 && posY == 5))
-						map.batLoc[1] = true;
+
+				if (lineState == WORK_WAIT) {
+					continue;
+				}
+				else if (lineState == GOING_WORK) {
 
 					tmproute = map.makeroute(posX, posY, lineState); //일할 경로 생성
 					lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 					//현재 저장하고 있는 일들을 알려주는 부분
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < 3; i++) {
 						cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
 					}
 					cout << endl;
@@ -260,6 +293,14 @@ void processing() {
 					//}
 					//충돌방지 알고리즘 삽입
 					putRoot(lineIdx);
+
+					if (lineTracer[lineIdx].route[0] != STOP) {
+						if ((posX == 10 && posY == 2))
+							map.batLoc[0] = true;
+						else if ((posX == 10 && posY == 5))
+							map.batLoc[1] = true;
+					}
+
 				}
 
 				if (lineTracer[lineIdx].bat + BATADD >= 100) {
@@ -288,7 +329,7 @@ void processing() {
 					lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 					//현재 저장하고 있는 일들을 알려주는 부분
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < 3; i++) {
 						cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
 					}
 					cout << endl;
@@ -308,7 +349,7 @@ void processing() {
 						//충전알고리즘 실행 후 어떻게 해야할지 나옴	(GOING_WORK or GOING_CHARGE)-------------------재성이 파트
 						lineState = charge_decision(lineIdx);
 
-						if (getout > 0) {
+						if (lineState == WORK_WAIT) {
 							continue;
 						}
 
@@ -317,7 +358,7 @@ void processing() {
 						lineTracer[lineIdx].putPath(tmproute);//일할 경로 삽입
 
 						//현재 저장하고 있는 일들을 알려주는 부분
-						for (int i = 0; i < 4; i++) {
+						for (int i = 0; i < 3; i++) {
 							cout << i << "th: s : " << map.storedWork[i].first << ", e : " << map.storedWork[i].second << "\t";
 						}
 						cout << endl;
