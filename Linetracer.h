@@ -41,7 +41,6 @@ public:
 	float work_bat; //현재 하고있는 일의 거리에 해당하는 배터리가 저장		//bat- work_bat = remain_bat
 	//float remainChrgBat; //충전소까지 가는 거리에 해당하는 배터리가 저장
 
-
 	Car() {
 		//chargeFlag = false;
 	}

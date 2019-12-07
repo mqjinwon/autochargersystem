@@ -113,6 +113,7 @@ bool Car::putRealPath() {
 			cerr << "error" << endl;
 		}
 	}
+
 	if (workFlag == 1) {
 		realpath.push_back(LIFT_DOWN);
 	}

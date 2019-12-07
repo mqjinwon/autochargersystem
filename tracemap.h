@@ -13,7 +13,7 @@ using namespace std;
 
 #define STUFFNUM 16 //물건놓는 곳의 갯수
 #define BATTERYNUM 2 //충전소 갯수
-#define STORENUM 3 //저장하고 있는 일의 갯수
+#define STORENUM 4 //저장하고 있는 일의 갯수
 
 //차의 상태를 표현하는 변수
 typedef enum {

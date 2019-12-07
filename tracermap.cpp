@@ -58,14 +58,17 @@ Map::Map() {
 		pos[5][5] = LUR;
 
 		//충전소 부분 끊기
-		pos[2][8] = DL;
-		pos[5][8] = DL;
-		pos[2][9] = LUR;
-		pos[5][9] = LUR;
+		pos[3][8] = DL;
+		pos[4][8] = DL;
+		pos[2][9] = UR;
+		pos[5][9] = UR;
 		pos[7][9] = U;
 
-		pos[3][9] = U;
-		pos[4][9] = U;
+		pos[3][9] = LU;
+		pos[4][9] = LU;
+
+		pos[2][9] = UR;
+		pos[5][9] = UR;
 		
 		pos[2][0] = D;
 		pos[4][0] = D;
@@ -537,6 +540,3 @@ vector<vector<int>> Map::makeroute(int car_x, int car_y, int status) {
 
 	return route;
 }
-
-
-
